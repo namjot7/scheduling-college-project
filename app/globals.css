@@ -2,20 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Headings */
+.h1 {
+  @apply text-3xl font-bold;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.h2 {
+  @apply text-2xl font-bold;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.h3 {
+  @apply text-xl font-bold;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply bg-color-1 text-white px-4 py-2 rounded-md;
+}
+
+.btn-secondary {
+  @apply bg-color-2 text-white px-4 py-2 rounded-md;
+}
+
+.btn-primary:hover {
+  @apply bg-color-4;
+}
+
+/* Layouts */
+.flex-center {
+  @apply flex justify-center items-center;
+}
+
+.flex-between {
+  @apply flex justify-between items-center;
 }

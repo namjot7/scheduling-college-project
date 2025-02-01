@@ -5,8 +5,10 @@ import Footer from './Footer'
 const Layout = ({ children }) => {
     return (
         <>
-            <Navbar />
-            {children}
+            <div className='flex min-h-screen'>
+                {/* <Navbar /> */}
+                {children}
+            </div>
             <Footer />
         </>
     )
