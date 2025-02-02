@@ -3,15 +3,17 @@ import Layout from '@/components/Layout'
 import Section from '@/components/Section'
 import { StyledTable } from '@/components/styles/StyledTable'
 import React, { useEffect, useState } from 'react'
-// const reader = require('xlsx')
+import * as XLSX from "xlsx";
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [message, setMessage] = useState("");
     const [files, setFiles] = useState([]); // files array
+    const [fileData, setFileData] = useState([]); // Store Excel data
+    const [name, setName] = useState("")
+    const [course, setCourse] = useState("")
+    const [semester, setSemester] = useState("")
 
-    // const file = reader.readFile('../details.xlsx')
 
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
@@ -31,24 +33,34 @@ const Schedules = () => {
     // Handle file upload
     const uploadSchedule = async () => {
         if (!selectedFile) {
-            console.log("no file selected");
+            alert("no file selected");
             return;
         }
         const formData = new FormData();
         formData.append("file", selectedFile);
 
         // ${uploadType} dynamic componenet
-        const response = await fetch(`/api/upload/schedule`, {
+        await fetch(`/api/upload/schedule`, {
             method: "POST",
             body: formData,
         });
-        const result = await response.json();
-        const filepath = result.filepath;
-
-        setFiles(prev => [...prev, filepath]);
-        console.log({ result, files, });
+        getSchedule()
     };
+    const addData = async () => {
+        await fetch(`/api/upload/schedule`, {
+            method: "POST",
+            body: formData,
+        });
+    }
+    // Function to Export Data as Excel
+    const downloadExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(scheduleInfo);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Schedule");
 
+        // Generate Excel file and trigger download
+        XLSX.writeFile(workbook, "schedule.xlsx");
+    };
     useEffect(() => {
         getSchedule()
     }, [])
@@ -58,7 +70,16 @@ const Schedules = () => {
                 <div className="">
                     <h2 className="h2">Winter 2025</h2>
 
-                    <div className="overflow-auto max-w-[70vw] max-h-[70vh]">
+                    {/* Download Excel */}
+                    <button className="btn-primary" onClick={() => downloadExcel()}>
+                        Download Excel
+                    </button>
+                    <button className="btn-primary" onClick={() => addData()}>
+                        Add data
+                    </button>
+
+                    {/* Real table */}
+                    <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
                         <StyledTable>
                             <thead>
                                 <tr>
@@ -139,14 +160,69 @@ const Schedules = () => {
                             </tbody>
                         </StyledTable>
                     </div>
+                    {/* Test table */}
+                    <div className="overflow-auto max-w-[70vw] max-h-[70vh]">
+                        <StyledTable>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {scheduleInfo?.length > 0 && scheduleInfo.map(item => (
+                                    <tr key={item.id}>
+                                        <td>{item.id}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.course}</td>
+                                        <td>{item.semester}</td>
+                                        <td>
+                                            <button className="btn-primary" onClick={() => editData()}>
+                                                Edit
+                                            </button>
+                                            <button className="btn-primary" onClick={() => deleteData()}>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+
+                            </tbody>
+                        </StyledTable>
+                    </div>
 
                     {/* File upload */}
-                    <input type="file" name="" id=""
-                        onChange={e => handleFileChange(e)}
-                    />
-                    <button className="btn-primary mt-5" onClick={() => uploadSchedule()}>
-                        Upload
-                    </button>
+                    <div className="">
+                        <input type="file" onChange={e => handleFileChange(e)} />
+                        <button className="btn-primary mt-5" onClick={() => uploadSchedule()}>
+                            Upload
+                        </button>
+                    </div>
+
+                    <form className="">
+                        <h3 className="h3">Add New Data</h3>
+                        <input
+                            className='block mb-3 px-3 py-1 text-black'
+                            type="text" placeholder='Name'
+                            value={name} onChange={e => setName(e.target.value)}
+                        />
+                        <input
+                            className='block mb-3 px-3 py-1 text-black'
+                            type="text" placeholder='Course'
+                            value={course} onChange={e => setCourse(e.target.value)}
+                        />
+                        <input
+                            className='block mb-3 px-3 py-1 text-black'
+                            type="text" placeholder='Semester'
+                            value={semester} onChange={e => setSemester(e.target.value)}
+                        />
+                        <button className="btn-primary" type="submit">
+                            Submit
+                        </button>
+                    </form>
                 </div>
             </Section>
         </Layout>

@@ -5,7 +5,7 @@ export const GET = async (req) => {
     try {
         const db = await initSql()
 
-        const query = "SELECT * FROM nct_scheduling_hub.schedules";
+        const query = "SELECT * FROM nct_scheduling_hub.schedules2";
         const data = await db.query(query);
 
         return NextResponse.json({ data });
