@@ -1,23 +1,56 @@
 'use client'
 import Layout from '@/components/Layout'
 import Section from '@/components/Section'
-import Table from '@/components/styles/Table.styled'
+import { StyledTable } from '@/components/styles/StyledTable'
 import React, { useEffect, useState } from 'react'
+// const reader = require('xlsx')
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [message, setMessage] = useState("");
+    const [files, setFiles] = useState([]); // files array
+
+    // const file = reader.readFile('../details.xlsx')
 
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
         const data = result.data[0];
-        const splitData = data.slice(0, 4);
-        console.log(splitData);
+        const splitData = data.slice(0, 4); // just for testing
+        // console.log(splitData);
         setScheduleInfo(splitData);
     }
+
+    // Handle file selection
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    };
+
+    // Handle file upload
+    const uploadSchedule = async () => {
+        if (!selectedFile) {
+            console.log("no file selected");
+            return;
+        }
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        // ${uploadType} dynamic componenet
+        const response = await fetch(`/api/upload/schedule`, {
+            method: "POST",
+            body: formData,
+        });
+        const result = await response.json();
+        const filepath = result.filepath;
+
+        setFiles(prev => [...prev, filepath]);
+        console.log({ result, files, });
+    };
+
     useEffect(() => {
         getSchedule()
-
     }, [])
     return (
         <Layout>
@@ -25,8 +58,8 @@ const Schedules = () => {
                 <div className="">
                     <h2 className="h2">Winter 2025</h2>
 
-                    <div className="overflow-x-auto max-w-screen">
-                        <Table>
+                    <div className="overflow-auto max-w-[70vw] max-h-[70vh]">
+                        <StyledTable>
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -104,9 +137,16 @@ const Schedules = () => {
                                 ))}
 
                             </tbody>
-                        </Table>
+                        </StyledTable>
                     </div>
 
+                    {/* File upload */}
+                    <input type="file" name="" id=""
+                        onChange={e => handleFileChange(e)}
+                    />
+                    <button className="btn-primary mt-5" onClick={() => uploadSchedule()}>
+                        Upload
+                    </button>
                 </div>
             </Section>
         </Layout>
