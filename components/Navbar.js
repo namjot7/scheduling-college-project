@@ -36,19 +36,19 @@ const Navbar = () => {
                         <img src="./navbar/schedule.svg" width={25} height={25} alt="" />
                         <span>Master Schedule</span>
                     </Link>
-                    <Link href={"/schdeules"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
+                    <Link href={"/classes"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
                         <img src="./navbar/schedule.svg" width={25} height={25} alt="" />
                         <span>Classrooms</span>
                     </Link>
-                    <Link href={"/schdeules"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
+                    <Link href={"/programs"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
                         <img src="./navbar/schedule.svg" width={25} height={25} alt="" />
-                        <span>Courses</span>
+                        <span>Programs</span>
                     </Link>
                 </div>
 
                 <div>
-                    <Link href={"/schdeules"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
-                        <img src="./navbar/schedule.svg" width={25} height={25} alt="" />
+                    <Link href={"/users"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >
+                        <img src="./navbar/users.svg" width={25} height={25} alt="" />
                         <span>Users</span>
                     </Link>
                     <Link href={"/schdeules"} className={usePathname() == "/schdeules" ? activeLink : inactiveLink} >

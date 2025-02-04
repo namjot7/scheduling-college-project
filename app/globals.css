@@ -17,7 +17,7 @@
 
 /* Buttons */
 .btn-primary {
-  @apply bg-color-1 text-white px-4 py-2 rounded-md;
+  @apply bg-color-1 text-white px-4 py-1.5 rounded-md;
 }
 
 .btn-secondary {
@@ -65,6 +65,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem
   }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -97,6 +98,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

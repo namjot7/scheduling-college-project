@@ -2,14 +2,13 @@
 import Layout from '@/components/Layout'
 import Section from '@/components/Section'
 import { StyledTable } from '@/components/styles/StyledTable'
+import UploadButton from '@/components/UploadButton'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [files, setFiles] = useState([]); // files array
-    const [fileData, setFileData] = useState([]); // Store Excel data
+    // const [files, setFiles] = useState([]); // files array
     const [name, setName] = useState("")
     const [course, setCourse] = useState("")
     const [semester, setSemester] = useState("")
@@ -19,33 +18,11 @@ const Schedules = () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
         const data = result.data[0];
-        const splitData = data.slice(0, 4); // just for testing
+        const splitData = data.slice(0, 15); // just for testing
         // console.log(splitData);
         setScheduleInfo(splitData);
     }
 
-    // Handle file selection
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        setSelectedFile(file);
-    };
-
-    // Handle file upload
-    const uploadSchedule = async () => {
-        if (!selectedFile) {
-            alert("no file selected");
-            return;
-        }
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-
-        // ${uploadType} dynamic componenet
-        await fetch(`/api/upload/schedule`, {
-            method: "POST",
-            body: formData,
-        });
-        getSchedule()
-    };
     const addData = async () => {
         await fetch(`/api/upload/schedule`, {
             method: "POST",
@@ -173,8 +150,8 @@ const Schedules = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {scheduleInfo?.length > 0 && scheduleInfo.map(item => (
-                                    <tr key={item.id}>
+                                {scheduleInfo?.length > 0 && scheduleInfo.map((item, idx) => (
+                                    <tr key={idx}>
                                         <td>{item.id}</td>
                                         <td>{item.name}</td>
                                         <td>{item.course}</td>
@@ -194,15 +171,9 @@ const Schedules = () => {
                         </StyledTable>
                     </div>
 
-                    {/* File upload */}
-                    <div className="">
-                        <input type="file" onChange={e => handleFileChange(e)} />
-                        <button className="btn-primary mt-5" onClick={() => uploadSchedule()}>
-                            Upload
-                        </button>
-                    </div>
+                    <UploadButton fileType={"schedule"} />
 
-                    <form className="">
+                    <form className="" method="UPDATE">
                         <h3 className="h3">Add New Data</h3>
                         <input
                             className='block mb-3 px-3 py-1 text-black'
