@@ -12,7 +12,6 @@ export async function GET() {
         const directoryPath = path.join(process.cwd(), "public/uploads/academic_files");
         console.log(directoryPath);
 
-
         // Get all the files in the folder
         const files = fs.readdirSync(directoryPath);
 

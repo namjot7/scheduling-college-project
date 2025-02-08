@@ -33,7 +33,8 @@ const UploadButton = ({ fileType, uploadedFiles, setUploadedFiles }) => {
         // refreshPage() // dynamic call the function like getSchedules/getFiles
     };
     return (
-        <div className="">
+        <div className="my-10">
+            <h3 className="h3">Upload New File</h3>
             <input type="file" onChange={e => handleFileChange(e)} />
             <button className="btn-primary mt-5" onClick={() => uploadFile(fileType)}>
                 Submit

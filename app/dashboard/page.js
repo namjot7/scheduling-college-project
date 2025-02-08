@@ -2,14 +2,6 @@
 import Layout from '@/components/Layout'
 import Section from '@/components/Section'
 import React, { useEffect, useState } from 'react'
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
 
 const Dashboard = () => {
     const [announcements, setAnnouncements] = useState([]);

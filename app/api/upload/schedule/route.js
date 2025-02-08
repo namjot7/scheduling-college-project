@@ -26,16 +26,6 @@ export async function POST(req) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes)
 
-        // Current working directroy (CWD) join with "uploads"
-        // const uploadDir = path.join(process.cwd(), "uploads");
-
-        // Ensure the directory exists
-        // await fs.mkdir(uploadDir, { recursive: true });
-        // const filepath = path.join(uploadDir, file.name);
-
-        // Copy file to the uploads folder
-        // await fs.writeFile(filepath, buffer); // filepath, image binary data 
-
         // Read the Excel file and convert it to JSON
         const workbook = XLSX.read(buffer, { type: "buffer" });
         const sheetName = workbook.SheetNames[0]; // Get first sheet

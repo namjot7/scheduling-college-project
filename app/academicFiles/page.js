@@ -53,15 +53,12 @@ const AcademicFiles = () => {
 
     return (
         <Layout>
-            <Section>
-                <h1 className="h1">Academic Files</h1>
-
+            <Section title={"Academic Files"}>
                 <UploadButton
                     fileType={'academicFiles'}
                     uploadedFiles={uploadedFiles}
                     setUploadedFiles={setUploadedFiles}
                 />
-
                 <h3 className="h3 mt-10 mb-5">Existing Files</h3>
                 <div className="flex gap-7 flex-col">
                     {uploadedFiles?.length > 0 && uploadedFiles.map((file, idx) => (
