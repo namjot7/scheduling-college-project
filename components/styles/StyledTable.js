@@ -16,6 +16,5 @@ export const StyledTable = styled.table`
         font-weight: bold;
         width: auto;
         text-align: left;
-        background-color: black;
     }
 `;

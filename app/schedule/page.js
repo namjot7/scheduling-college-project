@@ -1,4 +1,5 @@
 'use client'
+import DataForm from '@/components/DataForm'
 import Layout from '@/components/Layout'
 import Section from '@/components/Section'
 import { StyledTable } from '@/components/styles/StyledTable'
@@ -8,26 +9,33 @@ import * as XLSX from "xlsx";
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
-    // const [files, setFiles] = useState([]); // files array
-    const [name, setName] = useState("")
-    const [course, setCourse] = useState("")
-    const [semester, setSemester] = useState("")
+    const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited
 
-
+    const [visibleColumns, setVisibleColumns] = useState({
+        id: true,
+        name: true,
+        course: true,
+        semester: true,
+    });
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
-        const data = result.data[0];
-        const splitData = data.slice(0, 15); // just for testing
+        const data = result[0];
+        const splitData = data.slice(0, 6); // just for testing
         // console.log(splitData);
         setScheduleInfo(splitData);
     }
 
-    const addData = async () => {
-        await fetch(`/api/upload/schedule`, {
-            method: "POST",
-            body: formData,
+    const editData = async (id) => {
+        const itemToEdit = scheduleInfo.find(item => item.id === id);
+        console.log(itemToEdit);
+        setSelectedEntry(itemToEdit)
+    }
+    const deleteEntry = async (id) => {
+        await fetch(`/api/schedule?id=${id}`, {
+            method: 'DELETE',
         });
+        getSchedule()
     }
     // Function to Export Data as Excel
     const downloadExcel = () => {
@@ -37,6 +45,10 @@ const Schedules = () => {
 
         // Generate Excel file and trigger download
         XLSX.writeFile(workbook, "schedule.xlsx");
+    };
+    // Hide/unhide column
+    const toggleColumn = (col) => {
+        setVisibleColumns(prev => ({ ...prev, [col]: !prev[col] }));
     };
     useEffect(() => {
         getSchedule()
@@ -51,12 +63,12 @@ const Schedules = () => {
                     <button className="btn-primary" onClick={() => downloadExcel()}>
                         Download Excel
                     </button>
-                    <button className="btn-primary" onClick={() => addData()}>
-                        Add data
+                    <button className="btn-primary">
+                        Add data (Make box visible)
                     </button>
 
                     {/* Real table */}
-                    <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
+                    {/* <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
                         <StyledTable>
                             <thead>
                                 <tr>
@@ -136,31 +148,48 @@ const Schedules = () => {
 
                             </tbody>
                         </StyledTable>
+                    </div> */}
+
+                    {/* Column Visibility Toggle Controls */}
+                    <div className="mb-4">
+                        <h3 className="h3 mt-5">Select columns to display</h3>
+                        {Object.keys(visibleColumns).map((col) => (
+                            <label key={col} className="flex">
+                                <span>{col}</span>
+                                <input
+                                    className='w-5 ml-5'
+                                    type="checkbox"
+                                    checked={visibleColumns[col]}
+                                    onChange={() => toggleColumn(col)}
+                                />
+                            </label>
+                        ))}
                     </div>
+
                     {/* Test table */}
-                    <div className="overflow-auto max-w-[70vw] max-h-[70vh]">
+                    <div className="overflow-auto max-w-[90vw] max-h-[80vh]">
                         <StyledTable>
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Course</th>
-                                    <th>Semester</th>
+                                    {visibleColumns.id && <th>Id</th>}
+                                    {visibleColumns.name && <th>Name</th>}
+                                    {visibleColumns.course && <th>Course</th>}
+                                    {visibleColumns.semester && <th>Semester</th>}
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {scheduleInfo?.length > 0 && scheduleInfo.map((item, idx) => (
                                     <tr key={idx}>
-                                        <td>{item.id}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.course}</td>
-                                        <td>{item.semester}</td>
-                                        <td>
-                                            <button className="btn-primary" onClick={() => editData()}>
+                                        {visibleColumns.id && <td>{item.id}</td>}
+                                        {visibleColumns.name && <td>{item.name}</td>}
+                                        {visibleColumns.course && <td>{item.course}</td>}
+                                        {visibleColumns.semester && <td>{item.semester}</td>}
+                                        <td className='flex gap-3'>
+                                            <button className="btn-primary" onClick={() => editData(item.id)}>
                                                 Edit
                                             </button>
-                                            <button className="btn-primary" onClick={() => deleteData()}>
+                                            <button className="btn-danger" onClick={() => deleteEntry(item.id)}>
                                                 Delete
                                             </button>
                                         </td>
@@ -170,30 +199,8 @@ const Schedules = () => {
                             </tbody>
                         </StyledTable>
                     </div>
-
                     <UploadButton fileType={"schedule"} />
-
-                    <form className="" method="UPDATE">
-                        <h3 className="h3">Add New Data</h3>
-                        <input
-                            className='block mb-3 px-3 py-1 text-black'
-                            type="text" placeholder='Name'
-                            value={name} onChange={e => setName(e.target.value)}
-                        />
-                        <input
-                            className='block mb-3 px-3 py-1 text-black'
-                            type="text" placeholder='Course'
-                            value={course} onChange={e => setCourse(e.target.value)}
-                        />
-                        <input
-                            className='block mb-3 px-3 py-1 text-black'
-                            type="text" placeholder='Semester'
-                            value={semester} onChange={e => setSemester(e.target.value)}
-                        />
-                        <button className="btn-primary" type="submit">
-                            Submit
-                        </button>
-                    </form>
+                    <DataForm {...selectedEntry} getSchedule={getSchedule} />
                 </div>
             </Section>
         </Layout>

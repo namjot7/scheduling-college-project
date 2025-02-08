@@ -35,10 +35,10 @@ export async function POST(req) {
         console.log(jsonData);
 
         // Ensure database table exists
-        // AUTO_INCREMENT  PRIMARY KEY
+        // 
         await db.query(`
         CREATE TABLE IF NOT EXISTS nct_scheduling_hub.schedules2 (
-          id INT,
+          id INT AUTO_INCREMENT PRIMARY KEY,
           name VARCHAR(255),
           course VARCHAR(255),
           semester VARCHAR(255)

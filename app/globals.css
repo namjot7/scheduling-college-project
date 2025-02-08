@@ -25,7 +25,7 @@
 }
 
 .btn-secondary {
-  @apply bg-color-2 text-white px-4 py-2 rounded-md;
+  @apply bg-color-2 text-white px-4 py-1.5 rounded-md;
 }
 
 .btn-primary:hover {
@@ -33,11 +33,11 @@
 }
 
 .btn-danger {
-  @apply bg-red-500 px-4 py-2 rounded-md text-white;
+  @apply bg-red-500 px-4 py-1.5 rounded-md text-white;
 }
 
 .btn-default {
-  @apply bg-slate-900 text-white px-4 py-2 rounded-md;
+  @apply bg-slate-900 text-white px-4 py-1.5 rounded-md;
 }
 
 /* Layouts */
@@ -56,9 +56,13 @@ label {
 
 input,
 .input {
-  @apply w-full p-2 border rounded-lg focus:ring-blue-100 focus:outline-blue-600
+  @apply w-full p-2 border rounded-lg focus:ring-blue-100 focus:outline-blue-600;
 }
 
+input[type='file'] {
+  border: none;
+  padding: 11px 0;
+}
 
 @layer base {
   :root {
