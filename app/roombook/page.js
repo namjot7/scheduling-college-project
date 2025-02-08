@@ -60,7 +60,7 @@ const RoomBook = () => {
             <Section title={"Room Book Request"}>
                 <div className="p-6 rounded-lg shadow-lg w-full text-black flex gap-5">
 
-                    {/* <form onSubmit={e => handleForm(e)} className='bg-gray-400 w-full '>
+                    <form onSubmit={e => handleForm(e)} className='bg-gray-400 w-full '>
                         <h2 className="h2">Book a Room (Not admin)</h2>
 
                         <label>Full Name</label>
@@ -95,7 +95,7 @@ const RoomBook = () => {
                         <button type="submit" className="btn-primary w-full mt-5">
                             Submit Request
                         </button>
-                    </form> */}
+                    </form>
 
                     <div className="bg-gray-400 w-full ">
                         <h2 className="h2">Requests (Admin)</h2>

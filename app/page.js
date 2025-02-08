@@ -1,7 +1,13 @@
+"use client"
 import Layout from "@/components/Layout";
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
+  const { data: session } = useSession();
+  console.log(session);
+
   return (
+
     <div className="bg-n-6 h-screen w-screen flex flex-col gap-6 justify-center items-center">
       <h1 className="h1">Welcome to NCT Scheduling Hub</h1>
       <a href='/login' className="btn-primary">Login (front end done)</a>
