@@ -1,4 +1,17 @@
 
+## Login code for OAuth
+````
+{session ? (
+                <div>
+                    <p>Welcome, {session.user?.name}!</p>
+                    <button onClick={() => signOut()} className='btn-default'>Sign Out</button>
+                </div>
+            ) : (
+                <button onClick={() => signIn("azure-ad")}>Sign In with Microsoft</button>
+            )}
+
+````
+
 ## Code for validation in Room request form
 ````
 import { useState } from "react";

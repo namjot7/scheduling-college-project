@@ -1,3 +1,9 @@
+@import 'primereact/resources/themes/lara-light-blue/theme.css';
+/* Choose a theme */
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -21,23 +27,31 @@
 
 /* Buttons */
 .btn-primary {
-  @apply bg-blue-600 text-white px-4 py-1.5 rounded-md;
+  @apply bg-indigo-600 text-white px-4 py-1.5 rounded-md transition;
 }
 
 .btn-secondary {
-  @apply bg-color-2 text-white px-4 py-1.5 rounded-md;
-}
-
-.btn-primary:hover {
-  @apply bg-color-4;
+  @apply bg-blue-600 text-white px-4 py-1.5 rounded-md transition;
 }
 
 .btn-danger {
-  @apply bg-red-500 px-4 py-1.5 rounded-md text-white;
+  @apply bg-red-500 px-4 py-1.5 rounded-md text-white transition;
 }
 
 .btn-default {
-  @apply bg-slate-900 text-white px-4 py-1.5 rounded-md;
+  @apply bg-slate-900 text-white px-4 py-1.5 rounded-md transition;
+}
+
+.btn-link {
+  @apply font-semibold text-indigo-600 hover:text-indigo-500;
+}
+
+.btn-primary:hover {
+  @apply bg-indigo-700;
+}
+
+.btn-danger:hover {
+  @apply bg-red-600;
 }
 
 /* Layouts */
@@ -55,8 +69,9 @@ label {
 }
 
 input,
-.input {
-  @apply w-full p-2 border rounded-lg focus:ring-blue-100 focus:outline-blue-600;
+.input,
+textarea {
+  @apply w-full p-2 border rounded-lg focus:ring-blue-100 focus:outline-blue-400 mt-4;
 }
 
 input[type='file'] {

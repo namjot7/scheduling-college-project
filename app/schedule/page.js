@@ -11,18 +11,26 @@ const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredSchedule, setFilteredSchedule] = useState([]); // Separate filtered data
+
+    const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
+
     const [visibleColumns, setVisibleColumns] = useState({
         id: true,
         name: true,
         course: true,
         semester: true,
     });
+
+
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
         const data = result[0];
-        const splitData = data.slice(0, 6); // just for testing
-        // console.log(splitData);
+        const splitData = data?.slice(0, 6); // just for testing
+        // console.log(splitData, data);
+        //  scheduleInfo.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())
         setScheduleInfo(splitData);
     }
 
@@ -37,6 +45,7 @@ const Schedules = () => {
         });
         getSchedule()
     }
+
     // Function to Export Data as Excel
     const downloadExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(scheduleInfo);
@@ -50,22 +59,77 @@ const Schedules = () => {
     const toggleColumn = (col) => {
         setVisibleColumns(prev => ({ ...prev, [col]: !prev[col] }));
     };
+
+    // For searching
+    useEffect(() => {
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        // Search for all fields
+        const updatedSchedule = scheduleInfo.filter(item =>
+            item.name.toLowerCase().includes(lowerSearchTerm) ||
+            item.course.toLowerCase().includes(lowerSearchTerm) ||
+            item.semester.toLowerCase().includes(lowerSearchTerm)
+        );
+        setFilteredSchedule(updatedSchedule);
+    }, [searchTerm])
+
+    // Load schedules when page is loaded
     useEffect(() => {
         getSchedule()
     }, [])
+
     return (
         <Layout>
             <Section title={"Schedules"}>
-                <div className="">
-                    <h2 className="h2">Winter 2025</h2>
+                <div>
 
-                    {/* Download Excel */}
-                    <button className="btn-primary" onClick={() => downloadExcel()}>
-                        Download Excel
-                    </button>
-                    <button className="btn-primary">
-                        Add data (Make box visible)
-                    </button>
+                    {/* Heading and Schedule dropdown */}
+                    <div className="flex-between">
+                        <h2 className="h2">Winter 2025</h2>
+                        <div>
+                            <select className='input !m-0'>
+                                <option>Spring 2025</option>
+                                <option>Winter 2025</option>
+                                <option>Fall 2024</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Search & Download Excel & Add Entry buttons */}
+                    <div className="flex-between">
+                        <div className="relative">
+                            <img className='absolute top-6 left-2' src="./svg/search.svg" alt="" />
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 text-black border-gray-700"
+                            />
+                        </div>
+                        <div>
+                            <button className="btn-primary mr-5" onClick={() => downloadExcel()}>
+                                Download Excel
+                            </button>
+                            <button className="btn-primary">
+                                Add Entry
+                            </button></div>
+                    </div>
+
+                    {/* Column Visibility Toggle Controls */}
+                    <div className="mb-4">
+                        <h3 className="h3 mt-5">Select columns to display</h3>
+                        {Object.keys(visibleColumns).map(col => (
+                            <label key={col} className="flex">
+                                <span>{col}</span>
+                                <input
+                                    className='w-4 ml-5'
+                                    type="checkbox"
+                                    checked={visibleColumns[col]}
+                                    onChange={() => toggleColumn(col)}
+                                />
+                            </label>
+                        ))}
+                    </div>
 
                     {/* Real table */}
                     {/* <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
@@ -150,22 +214,6 @@ const Schedules = () => {
                         </StyledTable>
                     </div> */}
 
-                    {/* Column Visibility Toggle Controls */}
-                    <div className="mb-4">
-                        <h3 className="h3 mt-5">Select columns to display</h3>
-                        {Object.keys(visibleColumns).map((col) => (
-                            <label key={col} className="flex">
-                                <span>{col}</span>
-                                <input
-                                    className='w-5 ml-5'
-                                    type="checkbox"
-                                    checked={visibleColumns[col]}
-                                    onChange={() => toggleColumn(col)}
-                                />
-                            </label>
-                        ))}
-                    </div>
-
                     {/* Test table */}
                     <div className="overflow-auto max-w-[90vw] max-h-[80vh]">
                         <StyledTable>
@@ -179,7 +227,7 @@ const Schedules = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {scheduleInfo?.length > 0 && scheduleInfo.map((item, idx) => (
+                                {displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx}>
                                         {visibleColumns.id && <td>{item.id}</td>}
                                         {visibleColumns.name && <td>{item.name}</td>}
@@ -195,11 +243,12 @@ const Schedules = () => {
                                         </td>
                                     </tr>
                                 ))}
-
                             </tbody>
                         </StyledTable>
+
+
                     </div>
-                    <UploadButton fileType={"schedule"} />
+                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} />
                     <DataForm {...selectedEntry} getSchedule={getSchedule} />
                 </div>
             </Section>

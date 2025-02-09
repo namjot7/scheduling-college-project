@@ -19,9 +19,9 @@ const Layout = ({ children }) => {
     // }
     return (
         <>
-            {/* bg-slate-100 */}
-            <div className='flex min-h-screen bg-gray-700'>
-                {/* <Navbar /> */}
+            {/* bg-slate-100 bg-gray-700*/}
+            <div className='flex min-h-screen bg-slate-200'>
+                <Navbar />
                 {children}
             </div>
             {/* <Footer /> */}
