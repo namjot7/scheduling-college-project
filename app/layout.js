@@ -1,8 +1,19 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/SessionWrapper";
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
-        
+import { CustomFlowbiteTheme } from "flowbite-react";
+import { Flowbite } from "flowbite-react";
+
+const customTheme = {
+  button: {
+    color: {
+      primary:"bg-indigo-500 text-white hover:bg-indigo-600",
+      success:"bg-emerald-500 hover:bg-emerald-600 text-white",
+      danger: "bg-red-500 hover:bg-red-600 text-white",
+    },
+  },
+};
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -15,9 +26,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <SessionWrapper>
-        <PrimeReactProvider>
-          {children}
-          </PrimeReactProvider>
+          <Flowbite theme={{ theme: customTheme }}>
+            {children}
+          </Flowbite>
         </SessionWrapper>
       </body>
     </html>

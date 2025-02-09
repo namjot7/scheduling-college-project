@@ -71,12 +71,16 @@ label {
 input,
 .input,
 textarea {
-  @apply w-full p-2 border rounded-lg focus:ring-blue-100 focus:outline-blue-400 mt-4;
+  @apply w-full p-2 border rounded-lg border-gray-500 focus:ring-blue-100 focus:outline-blue-400 mt-4;
 }
 
 input[type='file'] {
   border: none;
   padding: 11px 0;
+}
+
+.form-basic{
+  @apply my-5 w-full max-w-[600px];
 }
 
 @layer base {

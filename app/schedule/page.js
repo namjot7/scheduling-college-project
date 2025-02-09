@@ -1,5 +1,6 @@
 'use client'
 import DataForm from '@/components/DataForm'
+import { DeleteBtn, EditBtn } from '@/components/design/icons'
 import Layout from '@/components/Layout'
 import Section from '@/components/Section'
 import { StyledTable } from '@/components/styles/StyledTable'
@@ -10,11 +11,14 @@ import * as XLSX from "xlsx";
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited
+    const [uploadedFiles, setUploadedFiles] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Separate filtered data
 
     const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
+
+    const [openModal, setOpenModal] = useState(false);
 
     const [visibleColumns, setVisibleColumns] = useState({
         id: true,
@@ -28,16 +32,17 @@ const Schedules = () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
         const data = result[0];
-        const splitData = data?.slice(0, 6); // just for testing
+        const splitData = data?.slice(0, 22); // just for testing
         // console.log(splitData, data);
         //  scheduleInfo.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())
         setScheduleInfo(splitData);
     }
 
     const editData = async (id) => {
+        setOpenModal(true);
         const itemToEdit = scheduleInfo.find(item => item.id === id);
         console.log(itemToEdit);
-        setSelectedEntry(itemToEdit)
+        setSelectedEntry(itemToEdit);
     }
     const deleteEntry = async (id) => {
         await fetch(`/api/schedule?id=${id}`, {
@@ -81,7 +86,6 @@ const Schedules = () => {
         <Layout>
             <Section title={"Schedules"}>
                 <div>
-
                     {/* Heading and Schedule dropdown */}
                     <div className="flex-between">
                         <h2 className="h2">Winter 2025</h2>
@@ -93,8 +97,7 @@ const Schedules = () => {
                             </select>
                         </div>
                     </div>
-
-                    {/* Search & Download Excel & Add Entry buttons */}
+                    {/* Search and Download Excel + Add Entry buttons */}
                     <div className="flex-between">
                         <div className="relative">
                             <img className='absolute top-6 left-2' src="./svg/search.svg" alt="" />
@@ -103,20 +106,21 @@ const Schedules = () => {
                                 placeholder="Search"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 text-black border-gray-700"
+                                className="pl-10 rounded-md "
                             />
                         </div>
-                        <div>
-                            <button className="btn-primary mr-5" onClick={() => downloadExcel()}>
+                        <div className='flex gap-3'>
+                            <button className="btn-primary" onClick={() => downloadExcel()}>
                                 Download Excel
                             </button>
-                            <button className="btn-primary">
-                                Add Entry
-                            </button></div>
+                            <button onClick={() => setOpenModal(true)} className="btn-primary">Add Entry</button>
+
+                            <DataForm showForm={openModal} setShowForm={setOpenModal} {...selectedEntry} getSchedule={getSchedule} />
+                        </div>
                     </div>
 
                     {/* Column Visibility Toggle Controls */}
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                         <h3 className="h3 mt-5">Select columns to display</h3>
                         {Object.keys(visibleColumns).map(col => (
                             <label key={col} className="flex">
@@ -129,7 +133,7 @@ const Schedules = () => {
                                 />
                             </label>
                         ))}
-                    </div>
+                    </div> */}
 
                     {/* Real table */}
                     {/* <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
@@ -234,12 +238,8 @@ const Schedules = () => {
                                         {visibleColumns.course && <td>{item.course}</td>}
                                         {visibleColumns.semester && <td>{item.semester}</td>}
                                         <td className='flex gap-3'>
-                                            <button className="btn-primary" onClick={() => editData(item.id)}>
-                                                Edit
-                                            </button>
-                                            <button className="btn-danger" onClick={() => deleteEntry(item.id)}>
-                                                Delete
-                                            </button>
+                                            <EditBtn onClickFunc={() => editData(item.id)} />
+                                            <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
                                         </td>
                                     </tr>
                                 ))}
@@ -248,8 +248,10 @@ const Schedules = () => {
 
 
                     </div>
-                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} />
-                    <DataForm {...selectedEntry} getSchedule={getSchedule} />
+
+                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} getSchedule={getSchedule}/>
+
+
                 </div>
             </Section>
         </Layout>

@@ -15,19 +15,19 @@ const Navbar = () => {
     // console.log(usePathname()); // works
 
     // Classes for dynamic navbar
-    const inactiveLink = `text-gray-300 flex gap-1 py-2 px-2.5 rounded-l-lg text-center hover:text-white ml-6 transition`;
+    const inactiveLink = `text-gray-300 flex gap-1 py-2 px-2.5 rounded-l-lg text-center hover:text-white ml-3 transition`;
     const activeLink = inactiveLink + " invert bg-black";
 
     return (
         // bg-slate-400 text-white 
         <aside className="sticky top-0 left-0 w-1/3 lg:w-1/5 h-screen pt-5 bg-slate-700 text-white">
             {/* Logo */}
-            <div className="ml-10">
-                <img src="./nclogo-white.svg" width={100} />
+            <div className="mx-4">
+                <img src="./nct-logo-white.svg" width={200} />
             </div>
 
             <nav className="flex flex-col gap-2" >
-                <div className="mt-5 py-5 border-t-2 border-b-2 border-gray-500">
+                <div className="mt-5 py-3 border-t-2 border-b-2 border-gray-500">
                     <Link href={"/dashboard"} className={usePathname() == "/dashboard" ? activeLink : inactiveLink}>
                         <img className="invert" src="./navbar/dashboard.svg" width={25} height={25} alt="" />
                         <span>Dashboard</span>

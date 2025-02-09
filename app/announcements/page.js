@@ -81,15 +81,14 @@ const Announcements = () => {
   return (
     <Layout>
       <Section title={"Announcements"}>
-
-        <AddBtn className="absolute top-24 w-36 right-4" showForm={setShowAnnForm} text={"Post"} />
+        <AddBtn className="absolute top-24 right-4" showForm={setShowAnnForm} text={"Post"} />
 
         {/* New annoucmente form */}
-        <form className={`${showAnnForm ? 'block' : 'hidden'}  p-5 w-full md:w-1/2 lg:w-1/3`} onSubmit={e => createAnnouncement(e)}>
+        <form className={`${showAnnForm ? 'block' : 'hidden'}  form-basic`} onSubmit={e => createAnnouncement(e)}>
           <h4 className="h3">Create New Announcement</h4>
           <input type="text" placeholder="Title" value={title}
             onChange={(e) => setTitle(e.target.value)} required />
-          <textarea rows="3" placeholder="Description" value={description}
+          <textarea rows="7" placeholder="Description" value={description}
             onChange={(e) => setDescription(e.target.value)} required />
           <button type="submit" className="w-full btn-primary mt-5">
             Submit
@@ -98,9 +97,8 @@ const Announcements = () => {
 
         {/* Announcements */}
         <div className="mt-16">
-          <div>
             {announcements?.length > 0 && announcements.map((item, idx) => (
-              <div key={idx} className="flex justify-between m-5 px-5 py-3  border-b-2 border-slate-300">
+              <div key={idx} className="flex justify-between px-5 py-3 border-b-2 border-slate-300">
                 <div className="w-2/3">
                   <h4 className='h4'>{item.title}</h4>
                   <p>{item.summary}</p>
@@ -111,7 +109,6 @@ const Announcements = () => {
                 </div>
               </div>
             ))}
-          </div>
         </div>
       </Section>
     </Layout>

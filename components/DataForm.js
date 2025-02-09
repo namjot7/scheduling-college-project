@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react"
-
+import { Button, Modal } from "flowbite-react";
 // position: absolute;
 //     top: 50%;
 //     left: 50%;
@@ -15,12 +15,13 @@ const DataForm = ({
     course: existingCourse,
     semester: existingSemester,
     getSchedule,
+    showForm,
+    setShowForm
 }) => {
     const [existingId, setExistingId] = useState("" || id);
     const [name, setName] = useState(existingName || "");
     const [course, setCourse] = useState(existingCourse || "");
     const [semester, setSemester] = useState(existingSemester || "");
-
 
     // Loading existing values to the useState variables
     useEffect(() => {
@@ -32,11 +33,8 @@ const DataForm = ({
         // console.log({ id, existingName, existingCourse, existingSemester });
     }, [existingName, existingCourse, existingSemester])
 
-
-
-
-    const saveData = async (e) => {
-        e.preventDefault();
+    const saveData = async () => {
+        // e.preventDefault();
 
         const newEntry = {
             id: existingId || "",
@@ -79,27 +77,48 @@ const DataForm = ({
         // setSemester("");
     }
     return (
-        <form onSubmit={e => saveData(e)}>
-            <h3 className="h3">Add New Data</h3>
-            <input
-                className='block mb-3 px-3 py-1 text-black'
-                type="text" placeholder='Name'
-                value={name} onChange={e => setName(e.target.value)}
-            />
-            <input
-                className='block mb-3 px-3 py-1 text-black'
-                type="text" placeholder='Course'
-                value={course} onChange={e => setCourse(e.target.value)}
-            />
-            <input
-                className='block mb-3 px-3 py-1 text-black'
-                type="text" placeholder='Semester'
-                value={semester} onChange={e => setSemester(e.target.value)}
-            />
-            <button className="btn-primary" type="submit">
-                Submit
-            </button>
-        </form>
+        <div>
+            {/* className={`${showForm ? 'block' : 'hidden'} bg-gray-50 p-5 form-basic absolute top-[20%] left-0`} */}
+            
+            <Modal dismissible show={showForm} onClose={() => setShowForm(false)}>
+                {/* <form onSubmit={e => saveData(e)} > */}
+                    <Modal.Header>Add New Data</Modal.Header>
+                    <Modal.Body>
+                        <input
+                            className='rounded-sm'
+                            type="text" placeholder='Name'
+                            value={name} onChange={e => setName(e.target.value)}
+                        />
+                        <input
+                            className='rounded-sm'
+                            type="text" placeholder='Course'
+                            value={course} onChange={e => setCourse(e.target.value)}
+                        />
+                        <input
+                            className='rounded-sm'
+                            type="text" placeholder='Semester'
+                            value={semester} onChange={e => setSemester(e.target.value)}
+                        />
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            color="success"
+                            onClick={() => {
+                                setShowForm(false)
+                                saveData();
+                            }}
+                            type="submit">
+                            Save
+                        </Button>
+                        <Button color="red"
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                            onClick={() => setShowForm(false)}>
+                            Cancel
+                        </Button>
+                    </Modal.Footer>
+                {/* </form> */}
+            </Modal>
+        </div>
     )
 }
 

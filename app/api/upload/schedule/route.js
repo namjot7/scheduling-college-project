@@ -49,11 +49,11 @@ export async function POST(req) {
             console.log(row);
             const { id, name, semester, course } = row;
 
-            const query = `INSERT INTO nct_scheduling_hub.schedules2 (id,name,semester,course) VALUES (?, ?, ?, ?)`;
-            const values = [id, name, semester, course]; // Convert Data into an Array (to avoid any risk of SQL injection)
+            const query = 'INSERT INTO nct_scheduling_hub.schedules2 (id,name,course,semester) VALUES (?, ?, ?, ?)';
+            const values = [id, name, course,semester ]; // Convert Data into an Array (to avoid any risk of SQL injection)
 
-            await db.query(query, values);
-
+            const data=await db.query(query, values);
+            // console.log(data);
         }
         return NextResponse.json({
             message: "Schedule uploaded successfully",

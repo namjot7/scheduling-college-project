@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
         <>
             {/* bg-slate-100 bg-gray-700*/}
             <div className='flex min-h-screen bg-slate-200'>
-                <Navbar />
+                {/* <Navbar /> */}
                 {children}
             </div>
             {/* <Footer /> */}
