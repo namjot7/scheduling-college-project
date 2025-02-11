@@ -1,8 +1,4 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-import { IncomingForm } from "formidable";
-import { writeFile } from "fs/promises";
 import * as XLSX from 'xlsx';
 import initSql from "@/lib/db";
 
@@ -34,15 +30,17 @@ export async function POST(req) {
         // console.log({ workbook, sheetName, sheet, jsonData });
         console.log(jsonData);
 
-        // Ensure database table exists
-        // 
+        // Drop the table if it exists
+        await db.query(`DROP TABLE IF EXISTS nct_scheduling_hub.schedules2`);
+
+        // Create the new table
         await db.query(`
-        CREATE TABLE IF NOT EXISTS nct_scheduling_hub.schedules2 (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(255),
-          course VARCHAR(255),
-          semester VARCHAR(255)
-        )
+            CREATE TABLE nct_scheduling_hub.schedules2 (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255),
+                course VARCHAR(255),
+                semester VARCHAR(255)
+            )
         `);
         // Insert Excel data into database
         for (const row of jsonData) {
@@ -50,9 +48,9 @@ export async function POST(req) {
             const { id, name, semester, course } = row;
 
             const query = 'INSERT INTO nct_scheduling_hub.schedules2 (id,name,course,semester) VALUES (?, ?, ?, ?)';
-            const values = [id, name, course,semester ]; // Convert Data into an Array (to avoid any risk of SQL injection)
+            const values = [id, name, course, semester]; // Convert Data into an Array (to avoid any risk of SQL injection)
 
-            const data=await db.query(query, values);
+            const data = await db.query(query, values);
             // console.log(data);
         }
         return NextResponse.json({

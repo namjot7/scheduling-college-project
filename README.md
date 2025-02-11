@@ -8,7 +8,9 @@
 3. VS Code
 
 ### Next steps
-1. Open the project in VS Code
+
+1. Download and open the project in VS Code
+
 2. Open the terminal and run the following command to install the node_modules packages.
 ````
 npm install
@@ -25,5 +27,14 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Create a .env file in the root directory and Setup the MYSQL database connection as below:
+````
+MYSQL_DB_NAME=
+MYSQL_DB_PORT=
+MYSQL_HOST=
+MYSQL_USER=
+MYSQL_PASSWORD=
+````
+
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

@@ -74,10 +74,10 @@ const Navbar = () => {
                 </div>
 
                 <div className="w-full border-t-2 border-gray-500 absolute left-0 bottom-0">
-                    <Link href={"/profile"} className={usePathname() == "/profile" ? activeLink : inactiveLink} >
+                    {/* <Link href={"/profile"} className={usePathname() == "/profile" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/avatar.svg" width={25} height={25} alt="" />
                         <span>My Profile</span>
-                    </Link>
+                    </Link> */}
                     <button className={inactiveLink}>
                         <img className="invert" src="./navbar/signout.svg" width={25} height={25} alt="" />
                         Sign out

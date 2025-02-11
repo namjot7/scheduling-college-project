@@ -1,15 +1,11 @@
 "use client"
-import React from 'react'
-import { useSession, signIn, signOut } from "next-auth/react";
 
 const Login = () => {
-    const { data: session } = useSession();
-
     return (
-        <div className="bg-n-1 min-h-screen flex-center">
+        <div className="bg-n-1 min-h-screen flex-center !invert">
             <div className="bg-gray-100 w-4/5 md:w-1/2 lg:w-1/3 px-5 py-10 rounded-lg drop-shadow-lg">
                 <div className="">
-                    <img alt="NCT Logo" src="./nctLogo-black.png" width={250} className='m-auto' />
+                    <img alt="NCT Logo" src="./nctLogo-black.png" width={200} className='m-auto' />
                     <h2 className="h1 text-center my-7">
                         Sign in
                     </h2>

@@ -1,12 +1,39 @@
 'use client'
-import DataForm from '@/components/DataForm'
 import { DeleteBtn, EditBtn } from '@/components/design/icons'
 import Layout from '@/components/Layout'
+import ScheduleDialog from '@/components/ScheduleDialog'
 import Section from '@/components/Section'
-import { StyledTable } from '@/components/styles/StyledTable'
 import UploadButton from '@/components/UploadButton'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
+
+// import { zodResolver } from "@hookform/resolvers/zod"
+// import { useForm } from "react-hook-form"
+// import { z } from "zod"
+
+// import { toast } from "@/components/hooks/use-toast"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
@@ -18,7 +45,8 @@ const Schedules = () => {
 
     const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
 
-    const [openModal, setOpenModal] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
+    const [openHide, setOpenHide] = useState(false);
 
     const [visibleColumns, setVisibleColumns] = useState({
         id: true,
@@ -26,8 +54,14 @@ const Schedules = () => {
         course: true,
         semester: true,
     });
+    // Hide/unhide column
+    const toggleColumn = (col) => {
 
-
+        setVisibleColumns(prev => ({
+            ...prev,
+            [col]: !prev[col] // reverse the current value of the key and added it back to the object
+        }));
+    };
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
@@ -39,7 +73,7 @@ const Schedules = () => {
     }
 
     const editData = async (id) => {
-        setOpenModal(true);
+        setShowDialog(true);
         const itemToEdit = scheduleInfo.find(item => item.id === id);
         console.log(itemToEdit);
         setSelectedEntry(itemToEdit);
@@ -59,10 +93,6 @@ const Schedules = () => {
 
         // Generate Excel file and trigger download
         XLSX.writeFile(workbook, "schedule.xlsx");
-    };
-    // Hide/unhide column
-    const toggleColumn = (col) => {
-        setVisibleColumns(prev => ({ ...prev, [col]: !prev[col] }));
     };
 
     // For searching
@@ -97,8 +127,8 @@ const Schedules = () => {
                             </select>
                         </div>
                     </div>
-                    {/* Search and Download Excel + Add Entry buttons */}
-                    <div className="flex-between">
+                    {/* Search and Download Excel & Add Entry buttons */}
+                    <div className="flex-between mb-5">
                         <div className="relative">
                             <img className='absolute top-6 left-2' src="./svg/search.svg" alt="" />
                             <input
@@ -113,27 +143,49 @@ const Schedules = () => {
                             <button className="btn-primary" onClick={() => downloadExcel()}>
                                 Download Excel
                             </button>
-                            <button onClick={() => setOpenModal(true)} className="btn-primary">Add Entry</button>
-
-                            <DataForm showForm={openModal} setShowForm={setOpenModal} {...selectedEntry} getSchedule={getSchedule} />
+                            <button onClick={() => setShowDialog(true)} className='btn-primary'>
+                                Add Entry
+                            </button>
                         </div>
                     </div>
 
                     {/* Column Visibility Toggle Controls */}
-                    {/* <div className="mb-4">
-                        <h3 className="h3 mt-5">Select columns to display</h3>
-                        {Object.keys(visibleColumns).map(col => (
-                            <label key={col} className="flex">
-                                <span>{col}</span>
-                                <input
-                                    className='w-4 ml-5'
-                                    type="checkbox"
-                                    checked={visibleColumns[col]}
-                                    onChange={() => toggleColumn(col)}
-                                />
-                            </label>
-                        ))}
-                    </div> */}
+                    {/* Extract all the keys from the object and create an array of them => ['id', 'name', 'course', 'semester']*/}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <button className="btn-primary">Hide/Unhide</button>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>Select the columns to display</SheetTitle>
+                            </SheetHeader>
+                            <div className="mt-5">
+                                {Object.keys(visibleColumns).map(col => (
+                                    <div className="flex items-center" key={col}>
+                                        <input
+                                            checked={visibleColumns[col]}
+                                            onChange={() => {
+                                                setVisibleColumns(prev => ({
+                                                    ...prev, [col]: !prev[col]
+                                                }));
+                                            }}
+                                            type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{col}</label>
+                                    </div>
+                                ))}
+                            </div>
+                            <SheetFooter>
+                                <SheetClose asChild>
+                                    <Button className="w-full mt-5" type="submit">Save changes</Button>
+                                </SheetClose>
+                            </SheetFooter>
+                        </SheetContent>
+                    </Sheet>
+
+                    <ScheduleDialog {...selectedEntry}
+                        showDialog={showDialog} setShowDialog={setShowDialog}
+                        getSchedule={getSchedule}
+                    />
 
                     {/* Real table */}
                     {/* <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
@@ -220,7 +272,7 @@ const Schedules = () => {
 
                     {/* Test table */}
                     <div className="overflow-auto max-w-[90vw] max-h-[80vh]">
-                        <StyledTable>
+                        <table className='table-basic'>
                             <thead>
                                 <tr>
                                     {visibleColumns.id && <th>Id</th>}
@@ -244,14 +296,10 @@ const Schedules = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </StyledTable>
-
-
+                        </table>
                     </div>
 
-                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} getSchedule={getSchedule}/>
-
-
+                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} getSchedule={getSchedule} />
                 </div>
             </Section>
         </Layout>

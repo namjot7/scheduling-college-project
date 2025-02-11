@@ -1,5 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
-const flowbite = require("flowbite-react/tailwind");
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -8,16 +6,17 @@ export default {
 		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",
 		"./app/**/*.{js,ts,jsx,tsx,mdx}",
-		flowbite.content(),
 	],
 	theme: {
 		extend: {
 			colors: {
+				primary2: {
+					DEFAULT: "#4f46e5", // Tailwind's indigo-600
+					// foreground: "#FFFFFF", // Contrast color for text (adjust if needed)
+				  },
 				color: {
-					'1': '#4f46e5',
-					'2': '#0b3d69',
-					'3': '#07a5d8',
-					'4': '#025d94'
+					'1': '#4f46e5', // bg-indigo-600
+					'2': '#2563eb', // bg-blue-600
 				},
 				n: {
 					'1': '#FFFFFF',
@@ -84,7 +83,6 @@ export default {
 	},
 	plugins: [
 		require("tailwindcss-animate"),
-		flowbite.plugin(),
 	],
 
 };
