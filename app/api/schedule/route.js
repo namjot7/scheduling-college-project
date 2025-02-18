@@ -1,11 +1,13 @@
 import initSql from "@/lib/db";
 import { NextResponse } from "next/server";
 
+const tableName = "schedules";
+
 export const GET = async (req) => {
     try {
         const db = await initSql()
 
-        const query = "SELECT * FROM nct_scheduling_hub.schedules2";
+        const query = `SELECT * FROM ${tableName}`;
         const data = await db.query(query);
 
         return NextResponse.json(data);
@@ -21,7 +23,7 @@ export const POST = async (req) => {
         const { name, course, semester } = await req.json();
         console.log({ name, course, semester });
 
-        const query = `INSERT INTO nct_scheduling_hub.schedules2 (name, course, semester) VALUES (?,?,?)`;
+        const query = `INSERT INTO ${tableName} (name, course, semester) VALUES (?,?,?)`;
         const values = [name, course, semester];
         const data = await db.query(query, values);
 
@@ -40,7 +42,7 @@ export const PUT = async (req) => {
 
         // SQL Query to update the existing record based on the id
         const query = `
-            UPDATE nct_scheduling_hub.schedules2
+            UPDATE ${tableName}
             SET name = ?, course = ?, semester = ?
             WHERE id = ?
         `;
@@ -62,7 +64,7 @@ export const DELETE = async (req) => {
         const id = url.searchParams.get('id');
         console.log({ url, id });
 
-        const query = 'DELETE FROM nct_scheduling_hub.schedules2 WHERE id=?';
+        const query = `DELETE FROM ${tableName} WHERE id=?`;
         const data = await db.query(query, [id]); // should be in array format
 
         return NextResponse.json({ message: "Deleted successfully", data });

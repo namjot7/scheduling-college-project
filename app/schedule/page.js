@@ -5,63 +5,62 @@ import ScheduleDialog from '@/components/ScheduleDialog'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
 import React, { useEffect, useState } from 'react'
-import * as XLSX from "xlsx";
-
-// import { zodResolver } from "@hookform/resolvers/zod"
-// import { useForm } from "react-hook-form"
-// import { z } from "zod"
-
-// import { toast } from "@/components/hooks/use-toast"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import * as XLSX from "xlsx"
+    ;
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Sheet,
     SheetClose,
     SheetContent,
-    SheetDescription,
     SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { sampleScheduleData } from '@/public/testData'
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited
-    const [uploadedFiles, setUploadedFiles] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Separate filtered data
 
-    const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
-
+    // const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
+    const displayData = filteredSchedule.length > 0 ? filteredSchedule : sampleScheduleData;
     const [showDialog, setShowDialog] = useState(false);
-    const [openHide, setOpenHide] = useState(false);
 
     const [visibleColumns, setVisibleColumns] = useState({
         id: true,
         name: true,
         course: true,
         semester: true,
+        session: true,
+        program: true,
+        intakeId: true,
+        term: true,
+        group: true,
+        code: true,
+        campus: true,
+        delivery: true,
+        roomNo: true,
+        credits: true,
+        hoursPaid: true,
+        hours: true,
+        finalEnrolment: true,
+        startDate: true,
+        endDate: true,
+        draftSchedule: true,
+        instructor: true,
+        instructorEmail: true,
+        programManager: true,
+        capacity: true,
+        additionalCapacity: true,
+        campusAddressCode: true,
+        remarks: true,
+        credentialsAndQualifications: true,
     });
-    // Hide/unhide column
-    const toggleColumn = (col) => {
 
-        setVisibleColumns(prev => ({
-            ...prev,
-            [col]: !prev[col] // reverse the current value of the key and added it back to the object
-        }));
-    };
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
@@ -114,13 +113,13 @@ const Schedules = () => {
 
     return (
         <Layout>
-            <Section title={"Schedules"}>
+            <Section title={"Master Schedule"}>
                 <div>
                     {/* Heading and Schedule dropdown */}
-                    <div className="flex-between">
+                    <div className="flex-between mb-2">
                         <h2 className="h2">Winter 2025</h2>
                         <div>
-                            <select className='input !m-0'>
+                            <select className='input'>
                                 <option>Spring 2025</option>
                                 <option>Winter 2025</option>
                                 <option>Fall 2024</option>
@@ -130,7 +129,7 @@ const Schedules = () => {
                     {/* Search and Download Excel & Add Entry buttons */}
                     <div className="flex-between mb-5">
                         <div className="relative">
-                            <img className='absolute top-6 left-2' src="./svg/search.svg" alt="" />
+                            <img className='absolute top-2 left-2' src="./svg/search.svg" alt="" />
                             <input
                                 type="text"
                                 placeholder="Search"
@@ -140,11 +139,13 @@ const Schedules = () => {
                             />
                         </div>
                         <div className='flex gap-3'>
-                            <button className="btn-primary" onClick={() => downloadExcel()}>
-                                Download Excel
-                            </button>
-                            <button onClick={() => setShowDialog(true)} className='btn-primary'>
+                            <button onClick={() => setShowDialog(true)} className='btn-primary flex-center'>
+                                <img src="./svg/plus.svg" alt="" />
                                 Add Entry
+                            </button>
+                            <button className="btn-primary flex" onClick={() => downloadExcel()}>
+                                <img src="./svg/download.svg" alt="download icon" />
+                                Excel
                             </button>
                         </div>
                     </div>
@@ -153,9 +154,12 @@ const Schedules = () => {
                     {/* Extract all the keys from the object and create an array of them => ['id', 'name', 'course', 'semester']*/}
                     <Sheet>
                         <SheetTrigger asChild>
-                            <button className="btn-primary">Hide/Unhide</button>
+                            <button className="btn-primary flex-center gap-1">
+                                <img src="./svg/eye.svg" alt="" />
+                                Hide/Unhide
+                            </button>
                         </SheetTrigger>
-                        <SheetContent>
+                        <SheetContent className="overflow-auto">
                             <SheetHeader>
                                 <SheetTitle>Select the columns to display</SheetTitle>
                             </SheetHeader>
@@ -174,7 +178,7 @@ const Schedules = () => {
                                     </div>
                                 ))}
                             </div>
-                            <SheetFooter>
+                            <SheetFooter className={'sticky bottom-3 left-1/2 -translate-x-1/2 w-2/3'}>
                                 <SheetClose asChild>
                                     <Button className="w-full mt-5" type="submit">Save changes</Button>
                                 </SheetClose>
@@ -188,90 +192,82 @@ const Schedules = () => {
                     />
 
                     {/* Real table */}
-                    {/* <div className="overflow-auto hidden max-w-[70vw] max-h-[70vh]">
-                        <StyledTable>
+                    <div className="overflow-scroll max-w-[70vw] max-h-[80vh]">
+                        <table className="table-basic">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Session</th>
-                                    <th>Program</th>
-                                    <th>Intake Id</th>
-                                    <th>Semester</th>
-                                    <th>Term</th>
-                                    <th>Group</th>
-                                    <th>Code</th>
-                                    <th>Course</th>
-                                    <th>Campus</th>
-                                    <th>Delivery</th>
-                                    <th>Room No.</th>
-                                    <th>Credits</th>
-                                    <th>Hours Paid</th>
-                                    <th>Hours</th>
-                                    <th>Final Enrolment</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Days</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Draft Time</th>
-                                    <th>Draft Schedule</th>
-                                    <th>Instructor</th>
-                                    <th>Instructor Email</th>
-                                    <th>Program Manager</th>
-                                    <th>Capacity</th>
-                                    <th>Additional Capacity</th>
-                                    <th>Campus Address</th>
-                                    <th>Campus Address Code</th>
-                                    <th>Remarks</th>
-                                    <th>Credentials & Qualifications</th>
+                                    {visibleColumns.id && <th>S_No</th>}
+                                    {visibleColumns.session && <th>Session</th>}
+                                    {visibleColumns.program && <th>Program</th>}
+                                    {visibleColumns.intakeId && <th>Intake Id</th>}
+                                    {visibleColumns.semester && <th>Semester</th>}
+                                    {visibleColumns.term && <th>Term</th>}
+                                    {visibleColumns.group && <th>Group</th>}
+                                    {visibleColumns.code && <th>Code</th>}
+                                    {visibleColumns.course && <th>Course_Name</th>}
+                                    {visibleColumns.campus && <th>Campus</th>}
+                                    {visibleColumns.delivery && <th>Delivery</th>}
+                                    {visibleColumns.roomNo && <th>Room No.</th>}
+                                    {visibleColumns.credits && <th>Credits</th>}
+                                    {visibleColumns.hoursPaid && <th>Hours Paid</th>}
+                                    {visibleColumns.hours && <th>Hours</th>}
+                                    {visibleColumns.finalEnrolment && <th>Final Enrolment</th>}
+                                    {visibleColumns.startDate && <th>Start Date</th>}
+                                    {visibleColumns.endDate && <th>End Date</th>}
+                                    {visibleColumns.draftSchedule && <th>Draft Schedule</th>}
+                                    {visibleColumns.instructor && <th>Instructor</th>}
+                                    {visibleColumns.instructorEmail && <th>Instructor Email</th>}
+                                    {visibleColumns.programManager && <th>Program Manager</th>}
+                                    {visibleColumns.capacity && <th>Capacity</th>}
+                                    {visibleColumns.additionalCapacity && <th>Additional Capacity</th>}
+                                    {visibleColumns.campusAddressCode && <th>Campus Address Code</th>}
+                                    {visibleColumns.remarks && <th>Remarks</th>}
+                                    {visibleColumns.credentialsAndQualifications && <th>Credentials & Qualifications</th>}
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {scheduleInfo?.length > 0 && scheduleInfo.map((item, idx) => (
+                                {displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx}>
-                                        <td>{item.id}</td>
-                                        <td>{item.session}</td>
-                                        <td>{item.program}</td>
-                                        <td>{item.intake_id}</td>
-                                        <td>{item.semester}</td>
-                                        <td>{item.term}</td>
-                                        <td>{item.group}</td>
-                                        <td>{item.code}</td>
-                                        <td>{item.course}</td>
-                                        <td>{item.campus}</td>
-                                        <td>{item.delivery}</td>
-                                        <td>{item.room_no}</td>
-                                        <td>{item.credits}</td>
-                                        <td>{item.hours_paid}</td>
-                                        <td>{item.hours}</td>
-                                        <td>{item.final_enrolment}</td>
-                                        <td>{item.start_date}</td>
-                                        <td>{item.end_date}</td>
-                                        <td>{item.days}</td>
-                                        <td>{item.start_time}</td>
-                                        <td>{item.end_time}</td>
-                                        <td>{item.draft_time}</td>
-                                        <td>{item.draft_schedule}</td>
-                                        <td>{item.instructor}</td>
-                                        <td>{item.instructor_email}</td>
-                                        <td>{item.program_manager}</td>
-                                        <td>{item.capacity}</td>
-                                        <td>{item.additional_capacity}</td>
-                                        <td>{item.campus_address}</td>
-                                        <td>{item.campus_address_code}</td>
-                                        <td>{item.remarks}</td>
-                                        <td>{item.credentials_qualifications}</td>
-                                        <td>Edit Delete</td>
+                                        {visibleColumns.id && <td>{item.S_No}</td>}
+                                        {visibleColumns.session && <td>{item.Session}</td>}
+                                        {visibleColumns.program && <td>{item.Program}</td>}
+                                        {visibleColumns.intakeId && <td>{item.Intake_id}</td>}
+                                        {visibleColumns.semester && <td>{item.Semester}</td>}
+                                        {visibleColumns.term && <td>{item.Term}</td>}
+                                        {visibleColumns.group && <td>{item.Group}</td>}
+                                        {visibleColumns.code && <td>{item.Code}</td>}
+                                        {visibleColumns.course && <td>{item.Course_Name}</td>}
+                                        {visibleColumns.campus && <td>{item.Campus}</td>}
+                                        {visibleColumns.delivery && <td>{item.Delivery}</td>}
+                                        {visibleColumns.roomNo && <td>{item.Room_No}</td>}
+                                        {visibleColumns.credits && <td>{item.Credits}</td>}
+                                        {visibleColumns.hoursPaid && <td>{item.Hours_Paid_for_the_class}</td>}
+                                        {visibleColumns.hours && <td>{item.Hours}</td>}
+                                        {visibleColumns.finalEnrolment && <td>{item.Enrolment_in_Class}</td>}
+                                        {visibleColumns.startDate && <td>{item.Start_date}</td>}
+                                        {visibleColumns.endDate && <td>{item.End_Date}</td>}
+                                        {visibleColumns.draftSchedule && <td>{item.Schedule_Draft}</td>}
+                                        {visibleColumns.instructor && <td>{item.Instructor}</td>}
+                                        {visibleColumns.instructorEmail && <td>{item.Instructor_Email_ID}</td>}
+                                        {visibleColumns.programManager && <td>{item.Program_Manager}</td>}
+                                        {visibleColumns.capacity && <td>{item.Capacity}</td>}
+                                        {visibleColumns.additionalCapacity && <td>{item.Additional_Capacity}</td>}
+                                        {visibleColumns.campusAddressCode && <td>{item.Campus_Address_Code}</td>}
+                                        {visibleColumns.credentialsAndQualifications && <td>{item.Credentails_and_Qulaifications}</td>}
+                                        <td className="flex gap-3">
+                                            <EditBtn onClickFunc={() => editData(item.id)} />
+                                            <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
+                                        </td>
                                     </tr>
                                 ))}
-
                             </tbody>
-                        </StyledTable>
-                    </div> */}
+                        </table>
+                    </div>
+
 
                     {/* Test table */}
-                    <div className="overflow-auto max-w-[90vw] max-h-[80vh]">
+                    {/* <div className="overflow-auto max-w-[70vw] max-h-[80vh]">
                         <table className='table-basic'>
                             <thead>
                                 <tr>
@@ -297,9 +293,9 @@ const Schedules = () => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </div> */}
 
-                    <UploadButton setUploadedFiles={setUploadedFiles} apiEndPoint={"schedule"} getSchedule={getSchedule} />
+                    <UploadButton apiEndPoint={"schedule"} getData={getSchedule} />
                 </div>
             </Section>
         </Layout>

@@ -13,6 +13,10 @@ const RoomBook = () => {
     const [room, setRoom] = useState("" || "Room 101");
     const [date, setDate] = useState("" || "2025-11-11");
     const [time, setTime] = useState("" || "14:00");
+    const [capacity, setCapacity] = useState(0 || 25);
+    const [remarks, setRemarks] = useState("" || "Need the room Urgent for next week event.");
+
+    const [toggle, setToggle] = useState(false)
 
     const getRoomRequests = async () => {
         const res = await fetch("/api/roombook");
@@ -59,8 +63,10 @@ const RoomBook = () => {
         <Layout>
             <Section title={"Room Book Request"}>
                 <div className="p-6 rounded-lg shadow-lg w-full text-black flex gap-5">
+                    <button className='btn-default absolute top-10 right-10' onClick={() => setToggle(!toggle)}>hide</button>
 
-                    <form onSubmit={e => handleForm(e)} className='bg-gray-400 w-full '>
+                    {/* User: Room book form */}
+                    <form onSubmit={e => handleForm(e)} className={`${toggle ? 'hidden' : 'block'}  w-full shadow-md lg:w-1/2 px-10 py-5 bg-gray-100`}>
                         <h2 className="h2">Book a Room (Not admin)</h2>
 
                         <label>Full Name</label>
@@ -71,6 +77,9 @@ const RoomBook = () => {
 
                         <label>Department</label>
                         <input type='text' value={department} onChange={e => setDepartment(e.target.value)} />
+
+                        <label>Capacity Required</label>
+                        <input type='text' value={capacity} onChange={e => setCapacity(e.target.value)} />
 
                         <label>Purpose</label>
                         <textarea className='input' placeholder="Enter purpose of booking" rows={3} value={purpose} onChange={e => setPurpose(e.target.value)}></textarea>
@@ -92,12 +101,17 @@ const RoomBook = () => {
                                 <input type="time" value={time} onChange={e => setTime(e.target.value)} />
                             </div>
                         </div>
+
+                        <label>Additional Remarks (Optional)</label>
+                        <textarea className='input' placeholder="Enter purpose of booking" rows={3} value={remarks} onChange={e => setRemarks(e.target.value)}></textarea>
+
                         <button type="submit" className="btn-primary w-full mt-5">
                             Submit Request
                         </button>
                     </form>
 
-                    <div className="bg-gray-400 w-full ">
+                    {/* Admin: Room book requests */}
+                    <div className={`${toggle ? 'block' : 'hidden'} w-full`}>
                         <h2 className="h2">Requests (Admin)</h2>
                         <div className="flex gap-4  flex-col">
                             {roomRequests?.length > 0 && roomRequests.map(item => (
@@ -129,7 +143,7 @@ const RoomBook = () => {
                     </div>
                 </div>
             </Section>
-        </Layout>
+        </Layout >
     )
 }
 

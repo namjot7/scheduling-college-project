@@ -15,11 +15,10 @@ const Navbar = () => {
     // console.log(usePathname()); // works
 
     // Classes for dynamic navbar
-    const inactiveLink = `text-gray-300 flex gap-1 py-2 px-2.5 rounded-l-lg text-center hover:text-white ml-3 transition`;
+    const inactiveLink = `text-gray-300 flex gap-3 py-2 px-2.5 rounded-l-lg text-center hover:text-white ml-3 transition`;
     const activeLink = inactiveLink + " invert bg-black";
 
     return (
-        // bg-slate-400 text-white 
         <aside className="sticky top-0 left-0 w-1/3 lg:w-1/5 h-screen pt-5 bg-slate-700 text-white">
             {/* Logo */}
             <div className="mx-4">
@@ -42,9 +41,9 @@ const Navbar = () => {
                     </Link>
                     <Link href={"/instructors"} className={usePathname() == "/instructors" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/instructor.svg" width={20} height={20} alt="" />
-                        <span className="ml-1">Instructor</span>
+                        <span className="ml-1">Instructors</span>
                     </Link>
-                    <Link href={"/classes"} className={usePathname() == "/classes" ? activeLink : inactiveLink} >
+                    <Link href={"/classrooms"} className={usePathname() == "/classrooms" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/classroom.svg" width={21} height={21} alt="" />
                         <span>Classrooms</span>
                     </Link>

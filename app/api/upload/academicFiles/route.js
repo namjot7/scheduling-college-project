@@ -9,7 +9,7 @@ export const config = {
         bodyParser: false,
     },
 };
-export async function POST(req) {
+export const POST = async (req) => {
     const db = await initSql();
     try {
         const formData = await req.formData();

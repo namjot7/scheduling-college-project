@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import * as XLSX from 'xlsx';
 import initSql from "@/lib/db";
 
+const tableName = "schedules";
+
 // Ensure Next.js does not parse the request body automatically
 export const config = {
     api: {
         bodyParser: false,
     },
 };
-export async function POST(req) {
+export const POST = async (req) => {
     const db = await initSql();
     try {
         const formData = await req.formData();
@@ -30,33 +32,48 @@ export async function POST(req) {
         // console.log({ workbook, sheetName, sheet, jsonData });
         console.log(jsonData);
 
+        // Extract column names (keys from the first object)
+        const columnNames = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
+        const sanitizedColumns = columnNames.map((col) =>
+            `\`${col.replace(/[^a-zA-Z0-9_]/g, "")}\` VARCHAR(255)`
+        ).join(", ");
+
+        // console.log(columnNames);
+        // console.log(sanitizedColumns);
+
         // Drop the table if it exists
-        await db.query(`DROP TABLE IF EXISTS nct_scheduling_hub.schedules2`);
+        // await db.query(`DROP TABLE IF EXISTS ${tableName}`);
 
         // Create the new table
-        await db.query(`
-            CREATE TABLE nct_scheduling_hub.schedules2 (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255),
-                course VARCHAR(255),
-                semester VARCHAR(255)
-            )
-        `);
+        // const createTableQuery = `
+        //     CREATE TABLE \`${tableName}\` (
+        //         ${sanitizedColumns}
+        //     )
+        // `;
+        // await db.query(createTableQuery);
+        // Prepare the data for insertion
+        // const values = jsonData.map(row => {
+        //     return columnNames.map(col => {
+        //         // Handle null/undefined values and sanitize each value
+        //         return row[col] ? `'${row[col].replace(/'/g, "''")}'` : 'NULL';
+        //     }).join(", ");
+        // }).join("),(");
+        // console.log(values);
+
         // Insert Excel data into database
         for (const row of jsonData) {
-            console.log(row);
-            const { id, name, semester, course } = row;
+            // console.log(row);
 
-            const query = 'INSERT INTO nct_scheduling_hub.schedules2 (id,name,course,semester) VALUES (?, ?, ?, ?)';
-            const values = [id, name, course, semester]; // Convert Data into an Array (to avoid any risk of SQL injection)
+            const query = `INSERT INTO ${tableName} (id,name,course,semester) VALUES (?, ?, ?, ?)`;
+            // const values = [id, name, course, semester]; // Convert Data into an Array (to avoid any risk of SQL injection)
 
-            const data = await db.query(query, values);
+            // const data = await db.query(query, values);
             // console.log(data);
         }
         return NextResponse.json({
             message: "Schedule uploaded successfully",
-            filepath: file.name,
-            data: jsonData,
+            // filepath: file.name,
+            // data: jsonData,
         });
     }
     catch (error) {
