@@ -21,7 +21,7 @@ const UploadButton = ({ apiEndPoint, getData }) => {
         }
         const formData = new FormData();
         formData.append("file", selectedFile);
-        console.log('file uploaded');
+        // console.log('file uploaded');
 
         const res = await fetch(`/api/upload/${apiEndPoint}`, {
             method: "POST",
@@ -30,7 +30,10 @@ const UploadButton = ({ apiEndPoint, getData }) => {
         // const data = await res.json();
         // const file = data.file;
         // console.log({ data, file });
-        getData()
+        if (res.ok) {
+            getData();
+            alert("File Uploaded Successfully!");
+        }
         // setSelectedFile(null);
         // setSelectedFileName("");
     };

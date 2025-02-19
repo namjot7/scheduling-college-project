@@ -18,10 +18,7 @@ const Programs = () => {
                             <h2 className='h2 mb-5'>{category}</h2>
                             <div className='grid grid-cols-2 lg:grid-cols-3 gap-5'>
                                 {programs[category].map((program, index) => (
-                                    <CourseCard key={index}
-                                        title={program.name} duration={program.duration}
-                                        img={program.image}
-                                    />
+                                    <CourseCard key={index} {...program} />
                                 ))}
                             </div>
                         </div>

@@ -7,6 +7,8 @@ const Instructors = () => {
   return (
     <Layout>
       <Section title={"Instructors Details"}>
+      <button className="btn-primary">Add Excel</button>
+
         {/* Test table */}
         <div className="overflow-auto max-w-[70vw] max-h-[80vh]">
           <table className="table-basic">
@@ -50,6 +52,7 @@ const Instructors = () => {
             </tbody>
           </table>
         </div>
+
       </Section>
     </Layout>
   )

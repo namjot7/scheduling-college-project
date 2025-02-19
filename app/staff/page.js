@@ -10,6 +10,7 @@ const Staff = () => {
         <Layout>
             <Section title={"On-site staff schedule"}>
                 <h2 className="h2">Mirvish Winter 2025 Schedule</h2>
+                <button className="btn-primary">Add Excel</button>
                 <div className="mt-10 grid grid-cols-3 gap-5">
                   <StaffCard/>
                   <StaffCard/>

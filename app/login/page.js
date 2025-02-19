@@ -45,9 +45,11 @@ const Login = () => {
                             </a>
                         </div>
                     </div>
-                    <button type="submit" className="btn-primary w-full mt-5">
-                        Sign in
-                    </button>
+                    <a href="/dashboard">
+                        <button type="submit" className="btn-primary w-full mt-5">
+                            Login
+                        </button>
+                    </a>
                 </form>
             </div>
         </div>

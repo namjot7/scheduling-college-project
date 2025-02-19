@@ -1,7 +1,7 @@
 import initSql from "@/lib/db";
 import { NextResponse } from "next/server";
 
-const tableName = "schedules";
+const tableName = "master_schedule";
 
 export const GET = async (req) => {
     try {

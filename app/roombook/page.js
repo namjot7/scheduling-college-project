@@ -84,12 +84,12 @@ const RoomBook = () => {
                         <label>Purpose</label>
                         <textarea className='input' placeholder="Enter purpose of booking" rows={3} value={purpose} onChange={e => setPurpose(e.target.value)}></textarea>
 
-                        <label className="block mb-2 font-medium">Select Room</label>
+                        {/* <label className="block mb-2 font-medium">Select Room</label>
                         <select className='input' value={room} onChange={e => setRoom(e.target.value)}>
                             <option>Room 101</option>
                             <option>Room 102</option>
                             <option>Room 103</option>
-                        </select>
+                        </select> */}
 
                         <div className="flex gap-4">
                             <div>
@@ -97,12 +97,16 @@ const RoomBook = () => {
                                 <input type="date" value={date} onChange={e => setDate(e.target.value)} />
                             </div>
                             <div>
-                                <label>Time</label>
+                                <label>Start Time</label>
                                 <input type="time" value={time} onChange={e => setTime(e.target.value)} />
                             </div>
+                            {/* <div>
+                                <label>End Time</label>
+                                <input type="time" value={time} onChange={e => setTime(e.target.value)} />
+                            </div> */}
                         </div>
 
-                        <label>Additional Remarks (Optional)</label>
+                        <label>Comment (Optional)</label>
                         <textarea className='input' placeholder="Enter purpose of booking" rows={3} value={remarks} onChange={e => setRemarks(e.target.value)}></textarea>
 
                         <button type="submit" className="btn-primary w-full mt-5">
