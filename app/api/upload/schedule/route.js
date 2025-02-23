@@ -32,6 +32,21 @@ export const POST = async (req) => {
         // console.log({ workbook, sheetName, sheet, jsonData });
         // console.log(jsonData);
 
+        jsonData.forEach(row => {
+            Object.keys(row).forEach(key => {
+                // Convert only if column name contains "date" or "time"
+                if (typeof row[key] === "number" && /(date)/i.test(key)) {
+                    row[key] = new Date((row[key] - 25569) * 86400000).toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+                }
+                else if (typeof row[key] === "number" && /(time)/i.test(key)) {
+                    let timestamp = new Date((row[key] - 25569) * 86400000).toISOString().split("T")[1];
+                    // console.log(timestamp.split(':').slice(0, 2).join(':'));
+                    row[key] = timestamp.split(':').slice(0, 2).join(':'); // 08:30
+                }
+            });
+        });
+        // console.log(jsonData);
+
         // Drop the table if it exists
         await db.query(`DROP TABLE IF EXISTS ${tableName}`);
 
@@ -39,12 +54,30 @@ export const POST = async (req) => {
 
         // Prepare data for insertion
         let columns = Object.keys(jsonData[0]);
+        // console.log(columns);
 
         // let modifiedcolumns = columns.map(col => {
         //     return `${col.replace(/[\s.&]/g, '_').toLowerCase()}`; // g means replacement occues globally => \s: space,
         // });
         // console.log({ modifiedcolumns });
 
+        // const columnDefinitions = columns.map(col => {
+        //     const columnName = col.replace(/[\s.&]/g, '_').toLowerCase();
+
+        //     // Define specific column types based on common column names
+        //     if (columnName.includes('date')) {
+        //         return `${columnName} DATE`;  // Stores dates properly
+        //     }
+        //     else if (columnName.includes('time')) {
+        //         return `${columnName} TIME`;  // Stores time correctly
+        //     }
+        //     else if (columnName.includes('datetime')) {
+        //         return `${columnName} DATETIME`; // Stores both date & time
+        //     }
+        //     else {
+        //         return `${columnName} TEXT`;  // Default to TEXT for other columns
+        //     }
+        // }).join(", ");
         const columnDefinitions = columns.map(col => {
             return `${col.replace(/[\s.&]/g, '_').toLowerCase()} TEXT`; // g means replacement occues globally => \s: space,
         }).join(", ");
@@ -69,7 +102,7 @@ export const POST = async (req) => {
             // console.log({ query });
             // console.log(data);
         }
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, columns });
     }
     catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

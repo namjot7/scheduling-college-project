@@ -1,12 +1,10 @@
 'use client'
 import { DeleteBtn, EditBtn } from '@/components/design/icons'
 import Layout from '@/components/Layout'
-import ScheduleDialog from '@/components/ScheduleDialog'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
 import React, { useEffect, useState } from 'react'
-import * as XLSX from "xlsx"
-    ;
+import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button"
 import {
     Sheet,
@@ -16,70 +14,57 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
+import ScheduleForm from '@/components/ScheduleForm'
 
 const Schedules = () => {
     const [scheduleInfo, setScheduleInfo] = useState([]);
-    const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited
+    const [filteredSchedule, setFilteredSchedule] = useState([]); // Separate filtered data
+    const [columns, setColumns] = useState([]);
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredSchedule, setFilteredSchedule] = useState([]); // Separate filtered data
-
     const displayData = filteredSchedule.length > 0 ? filteredSchedule : scheduleInfo;
-    const [showDialog, setShowDialog] = useState(false);
-
-    const [visibleColumns, setVisibleColumns] = useState({
-        s_no: true,
-        session: true,
-        program: true,
-        intakeId: true,
-        course: true,
-        semester: true,
-        name: true,
-        term: true,
-        group: true,
-        code: true,
-        campus: true,
-        delivery: true,
-        roomNo: true,
-        credits: true,
-        hoursPaid: true,
-        hours: true,
-        finalEnrolment: true,
-        startDate: true,
-        endDate: true,
-        draftSchedule: true,
-        instructor: true,
-        instructorEmail: true,
-        programManager: true,
-        capacity: true,
-        additionalCapacity: true,
-        campusAddressCode: true,
-        remarks: true,
-        credentialsAndQualifications: true,
-    });
+    const [visibleColumns, setVisibleColumns] = useState({});
+    const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited 
+    const [showForm, setShowForm] = useState(false);
 
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
-        const data = result[0];
-        const splitData = data?.slice(0, 22); // just for testing
-        console.log(splitData, data);
-        //  scheduleInfo.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())
-        setScheduleInfo(splitData);
+        // console.log(result);
+
+        const data = result.data[0];
+        const columnsData = result.columnsData[0];
+        let modCols = columnsData.map(item => item.COLUMN_NAME);
+        // console.log(modCols); // Get column_name
+
+        // Initialize visibility for all columns as true
+        let initialVisibility = {};
+        modCols.forEach(col => initialVisibility[col] = true)
+        // console.log(initialVisibility);
+
+        setScheduleInfo(data);
+        setColumns(modCols);
+        setVisibleColumns(initialVisibility);
     }
+    useEffect(() => {
+        // console.log({ columns });
+    }, [columns])
 
     const editData = async (id) => {
-        setShowDialog(true);
+        setShowForm(true);
         const itemToEdit = scheduleInfo.find(item => item.id === id);
-        console.log(itemToEdit);
+        // console.log(itemToEdit);
         setSelectedEntry(itemToEdit);
     }
     const deleteEntry = async (id) => {
-        await fetch(`/api/schedule?id=${id}`, {
-            method: 'DELETE',
-        });
-        getSchedule()
+        let confirmDelete = confirm("Are you sure you want to delete this entry? This action cannot be reversed.")
+        if (confirmDelete) {
+            await fetch(`/api/schedule?id=${id}`, {
+                method: 'DELETE',
+            });
+            getSchedule();
+        }
     }
 
     // Function to Export Data as Excel
@@ -91,19 +76,20 @@ const Schedules = () => {
         // Generate Excel file and trigger download
         XLSX.writeFile(workbook, "schedule.xlsx");
     };
-
-    // For searching
+    // Handle column visibility toggle
+    const toggleColumnVisibility = (col) => {
+        setVisibleColumns(prev => ({
+            ...prev, [col]: !prev[col]
+        }));
+    };
+    // Search for all fields
     useEffect(() => {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        console.log(lowerSearchTerm);
-
-        // Search for all fields
-        const updatedSchedule = scheduleInfo.filter(item =>
-            item.Program.toLowerCase().includes(lowerSearchTerm) ||
-            item.Course_Name.toLowerCase().includes(lowerSearchTerm) ||
-            item.Semester.toLowerCase().includes(lowerSearchTerm)
+        let lowerSearchTerm = searchTerm.toLowerCase();
+        let updatedSchedule = scheduleInfo.filter(item =>
+            Object.values(item).some(value =>
+                value && value.toString().toLowerCase().includes(lowerSearchTerm)
+            )
         );
-        // console.log(updatedSchedule);
         setFilteredSchedule(updatedSchedule);
     }, [searchTerm])
 
@@ -140,7 +126,7 @@ const Schedules = () => {
                             />
                         </div>
                         <div className='flex gap-3'>
-                            <button onClick={() => setShowDialog(true)} className='btn-primary flex-center'>
+                            <button onClick={() => setShowForm(!showForm)} className='btn-primary flex-center'>
                                 <img src="./svg/plus.svg" alt="" />
                                 Add Entry
                             </button>
@@ -160,7 +146,7 @@ const Schedules = () => {
                                 Hide/Unhide
                             </button>
                         </SheetTrigger>
-                        <SheetContent className="overflow-auto p-0">
+                        <SheetContent className="overflow-auto p-0" aria-describedby={undefined}>
                             <SheetHeader>
                                 <SheetTitle className="px-5 pt-5">Select the columns to display</SheetTitle>
                             </SheetHeader>
@@ -169,11 +155,7 @@ const Schedules = () => {
                                     <div className="flex items-center px-5" key={col}>
                                         <input
                                             checked={visibleColumns[col]}
-                                            onChange={() => {
-                                                setVisibleColumns(prev => ({
-                                                    ...prev, [col]: !prev[col]
-                                                }));
-                                            }}
+                                            onChange={() => toggleColumnVisibility(col)}
                                             type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 focus:ring-2" />
                                         <label className="ms-2 text-sm font-medium text-gray-900">{col}</label>
                                     </div>
@@ -188,8 +170,9 @@ const Schedules = () => {
                     </Sheet>
 
                     {/* Edit and Add Dialog */}
-                    <ScheduleDialog {...selectedEntry}
-                        showDialog={showDialog} setShowDialog={setShowDialog}
+                    <ScheduleForm
+                        selectedEntry={selectedEntry} setSelectedEntry={setSelectedEntry}
+                        showForm={showForm} setShowForm={setShowForm}
                         getSchedule={getSchedule}
                     />
 
@@ -199,81 +182,32 @@ const Schedules = () => {
                             <thead>
                                 <tr>
                                     <th>Actions</th>
-                                    {visibleColumns.s_no && <th>S_No</th>}
-                                    {visibleColumns.session && <th>Session</th>}
-                                    {visibleColumns.program && <th>Program</th>}
-                                    {visibleColumns.intakeId && <th>Intake Id</th>}
-                                    {visibleColumns.semester && <th>Semester</th>}
-                                    {visibleColumns.term && <th>Term</th>}
-                                    {visibleColumns.group && <th>Group</th>}
-                                    {visibleColumns.code && <th>Code</th>}
-                                    {visibleColumns.course && <th>Course_Name</th>}
-                                    {visibleColumns.campus && <th>Campus</th>}
-                                    {visibleColumns.delivery && <th>Delivery</th>}
-                                    {visibleColumns.roomNo && <th>Room No.</th>}
-                                    {visibleColumns.credits && <th>Credits</th>}
-                                    {visibleColumns.hoursPaid && <th>Hours Paid</th>}
-                                    {visibleColumns.hours && <th>Hours</th>}
-                                    {visibleColumns.finalEnrolment && <th>Final Enrolment</th>}
-                                    {visibleColumns.startDate && <th>Start Date</th>}
-                                    {visibleColumns.endDate && <th>End Date</th>}
-                                    {visibleColumns.draftSchedule && <th>Draft Schedule</th>}
-                                    {visibleColumns.instructor && <th>Instructor</th>}
-                                    {visibleColumns.instructorEmail && <th>Instructor Email</th>}
-                                    {visibleColumns.programManager && <th>Program Manager</th>}
-                                    {visibleColumns.capacity && <th>Capacity</th>}
-                                    {visibleColumns.additionalCapacity && <th>Additional Capacity</th>}
-                                    {visibleColumns.campusAddressCode && <th>Campus Address Code</th>}
-                                    {visibleColumns.remarks && <th>Remarks</th>}
-                                    {visibleColumns.credentialsAndQualifications && <th>Credentials & Qualifications</th>}
+                                    {columns.map((col, index) => (
+                                        visibleColumns[col] && <th key={index}>{col}</th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData?.length > 0 && displayData.map((item, idx) => (
-                                    <tr key={idx} className=''>
-                                        <td className="flex gap-3">
+                                {displayData.map((item, idx) => (
+                                    <tr key={idx} className='relative'>
+                                         <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
                                             <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
                                         </td>
-                                        {visibleColumns.s_no && <td>{item.s_no}</td>}
-                                        {visibleColumns.session && <td>{item.session}</td>}
-                                        {visibleColumns.program && <td>{item.program}</td>}
-                                        {visibleColumns.intakeId && <td>{item.intake_id}</td>}
-                                        {visibleColumns.semester && <td>{item.semester}</td>}
-                                        {visibleColumns.term && <td>{item.term}</td>}
-                                        {visibleColumns.group && <td>{item.group_name}</td>}
-                                        {visibleColumns.code && <td>{item.code}</td>}
-                                        {visibleColumns.course && <td>{item.course_name}</td>}
-                                        {visibleColumns.campus && <td>{item.campus}</td>}
-                                        {visibleColumns.delivery && <td>{item.delivery}</td>}
-                                        {visibleColumns.roomNo && <td>{item.room_no}</td>}
-                                        {visibleColumns.credits && <td>{item.credits}</td>}
-                                        {visibleColumns.hoursPaid && <td>{item.hours_paid_for_the_class}</td>}
-                                        {visibleColumns.hours && <td>{item.hours}</td>}
-                                        {visibleColumns.finalEnrolment && <td>{item.enrolment_in_class}</td>}
-                                        {visibleColumns.startDate && <td>{item.start_date}</td>}
-                                        {visibleColumns.endDate && <td>{item.end_date}</td>}
-                                        {visibleColumns.draftSchedule && <td>{item.schedule_draft}</td>}
-                                        {visibleColumns.instructor && <td>{item.instructor}</td>}
-                                        {visibleColumns.instructorEmail && <td>{item.instructor_email_id}</td>}
-                                        {visibleColumns.programManager && <td>{item.program_manager}</td>}
-                                        {visibleColumns.capacity && <td>{item.capacity}</td>}
-                                        {visibleColumns.additionalCapacity && <td>{item.additional_capacity}</td>}
-                                        {visibleColumns.campusAddressCode && <td>{item.campus_address_code}</td>}
-                                        {visibleColumns.campusAddressCode && <td>{item.remarks}</td>}
-                                        {visibleColumns.credentialsAndQualifications && <td>{item.credentails___qulaifications}</td>}
-
+                                        {columns.map((col, index) =>
+                                            visibleColumns[col] && <td key={index}>{item[col]}</td>
+                                        )}
+                                       
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-
+                    
                     <UploadButton apiEndPoint={"schedule"} getData={getSchedule} />
                 </div>
             </Section>
         </Layout>
     )
 }
-
 export default Schedules

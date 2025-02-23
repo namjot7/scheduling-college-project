@@ -65,7 +65,7 @@ label {
 input,
 .input,
 textarea {
-  @apply w-full p-2 border rounded-lg text-black border-gray-500 focus:ring-blue-100 focus:outline-blue-400;
+  @apply w-full px-2 py-1.5 border rounded-lg text-black border-gray-500 focus:ring-blue-100 focus:outline-blue-400;
 }
 
 input[type='file'] {
@@ -88,6 +88,7 @@ input[type='file'] {
 }
 
 .table-basic th {
+  text-transform: capitalize;
   font-weight: bold;
   text-align: left;
 }

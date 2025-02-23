@@ -12,6 +12,110 @@
 
 ````
 
+## Code for displaying schedules table data (not dynamic)
+````
+
+
+// s_no: true,
+        // session: true,
+        // program: true,
+        // intakeId: true,
+        // course: true,
+        // semester: true,
+        // name: true,
+        // term: true,
+        // group: true,
+        // code: true,
+        // campus: true,
+        // delivery: true,
+        // roomNo: true,
+        // credits: true,
+        // hoursPaid: true,
+        // hours: true,
+        // finalEnrolment: true,
+        // startDate: true,
+        // endDate: true,
+        // draftSchedule: true,
+        // instructor: true,
+        // instructorEmail: true,
+        // programManager: true,
+        // capacity: true,
+        // additionalCapacity: true,
+        // campusAddressCode: true,
+        // remarks: true,
+        // credentialsAndQualifications: true,
+
+
+        
+  {/* <tr>
+                                    {visibleColumns.s_no && <th>S_No</th>}
+                                    {visibleColumns.session && <th>Session</th>}
+                                    {visibleColumns.program && <th>Program</th>}
+                                    {visibleColumns.intakeId && <th>Intake Id</th>}
+                                    {visibleColumns.semester && <th>Semester</th>}
+                                    {visibleColumns.term && <th>Term</th>}
+                                    {visibleColumns.group && <th>Group</th>}
+                                    {visibleColumns.code && <th>Code</th>}
+                                    {visibleColumns.course && <th>Course_Name</th>}
+                                    {visibleColumns.campus && <th>Campus</th>}
+                                    {visibleColumns.delivery && <th>Delivery</th>}
+                                    {visibleColumns.roomNo && <th>Room No.</th>}
+                                    {visibleColumns.credits && <th>Credits</th>}
+                                    {visibleColumns.hoursPaid && <th>Hours Paid</th>}
+                                    {visibleColumns.hours && <th>Hours</th>}
+                                    {visibleColumns.finalEnrolment && <th>Final Enrolment</th>}
+                                    {visibleColumns.startDate && <th>Start Date</th>}
+                                    {visibleColumns.endDate && <th>End Date</th>}
+                                    {visibleColumns.draftSchedule && <th>Draft Schedule</th>}
+                                    {visibleColumns.instructor && <th>Instructor</th>}
+                                    {visibleColumns.instructorEmail && <th>Instructor Email</th>}
+                                    {visibleColumns.programManager && <th>Program Manager</th>}
+                                    {visibleColumns.capacity && <th>Capacity</th>}
+                                    {visibleColumns.additionalCapacity && <th>Additional Capacity</th>}
+                                    {visibleColumns.campusAddressCode && <th>Campus Address Code</th>}
+                                    {visibleColumns.remarks && <th>Remarks</th>}
+                                    {visibleColumns.credentialsAndQualifications && <th>Credentials & Qualifications</th>}
+                                    <th>Actions</th>
+                                </tr> */}
+
+
+// <tr key={idx}>
+                                    //     {/* {columns} */}
+                                    //     {visibleColumns.s_no && <td>{item.s_no}</td>}
+                                    //     {visibleColumns.session && <td>{item.session}</td>}
+                                    //     {visibleColumns.program && <td>{item.program}</td>}
+                                    //     {visibleColumns.intakeId && <td>{item.intake_id}</td>}
+                                    //     {visibleColumns.semester && <td>{item.semester}</td>}
+                                    //     {visibleColumns.term && <td>{item.term}</td>}
+                                    //     {visibleColumns.group && <td>{item.group_name}</td>}
+                                    //     {visibleColumns.code && <td>{item.code}</td>}
+                                    //     {visibleColumns.course && <td>{item.course_name}</td>}
+                                    //     {visibleColumns.campus && <td>{item.campus}</td>}
+                                    //     {visibleColumns.delivery && <td>{item.delivery}</td>}
+                                    //     {visibleColumns.roomNo && <td>{item.room_no}</td>}
+                                    //     {visibleColumns.credits && <td>{item.credits}</td>}
+                                    //     {visibleColumns.hoursPaid && <td>{item.hours_paid_for_the_class}</td>}
+                                    //     {visibleColumns.hours && <td>{item.hours}</td>}
+                                    //     {visibleColumns.finalEnrolment && <td>{item.enrolment_in_class}</td>}
+                                    //     {visibleColumns.startDate && <td>{item.start_date}</td>}
+                                    //     {visibleColumns.endDate && <td>{item.end_date}</td>}
+                                    //     {visibleColumns.draftSchedule && <td>{item.schedule_draft}</td>}
+                                    //     {visibleColumns.instructor && <td>{item.instructor}</td>}
+                                    //     {visibleColumns.instructorEmail && <td>{item.instructor_email_id}</td>}
+                                    //     {visibleColumns.programManager && <td>{item.program_manager}</td>}
+                                    //     {visibleColumns.capacity && <td>{item.capacity}</td>}
+                                    //     {visibleColumns.additionalCapacity && <td>{item.additional_capacity}</td>}
+                                    //     {visibleColumns.campusAddressCode && <td>{item.campus_address_code}</td>}
+                                    //     {visibleColumns.campusAddressCode && <td>{item.remarks}</td>}
+                                    //     {visibleColumns.credentialsAndQualifications && <td>{item.credentails___qulaifications}</td>}
+                                    //     <td className="flex gap-3">
+                                    //         <EditBtn onClickFunc={() => editData(item.id)} />
+                                    //         <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
+                                    //     </td>
+                                    // </tr>
+
+````
+
 ## Code for validation in Room request form
 ````
 import { useState } from "react";

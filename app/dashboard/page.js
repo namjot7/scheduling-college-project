@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Calendar } from "@/components/ui/calendar"
 
 const Dashboard = () => {
-    const [date, setDate] = useState(new Date())
+    // const [date, setDate] = useState(new Date())
     return (
         <Layout>
             <Section title={'Dashboard'}>
