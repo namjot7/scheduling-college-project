@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { UserRoleProvider } from "@/components/UserContext";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -10,10 +11,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="light">
-      <body className={`${inter.className} antialiased`}>
-            {children}
-      </body>
-    </html>
+    <UserRoleProvider>
+      <html lang="en" className="light">
+        <body className={`${inter.className} antialiased`}>
+          {children}
+        </body>
+      </html>
+    </UserRoleProvider>
   );
 }

@@ -1,8 +1,12 @@
 import { useState } from "react";
 
-const UploadButton = ({ apiEndPoint, getData }) => {
+const UploadButton = ({
+    apiEndPoint,
+    getData,
+}) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileName, setSelectedFileName] = useState('');
+    // const [scheduleTerm, setScheduleTerm] = useState("" || st);
 
     // Handle file selection
     const handleFileChange = (event) => {
@@ -21,18 +25,15 @@ const UploadButton = ({ apiEndPoint, getData }) => {
         }
         const formData = new FormData();
         formData.append("file", selectedFile);
-        // console.log('file uploaded');
+        formData.append("filename", selectedFileName);
 
         const res = await fetch(`/api/upload/${apiEndPoint}`, {
             method: "POST",
             body: formData,
         });
-        // const data = await res.json();
-        // const file = data.file;
-        // console.log({ data, file });
         if (res.ok) {
             getData();
-            alert("File Uploaded Successfully!");
+            // alert("File Uploaded Successfully!");
         }
         // setSelectedFile(null);
         // setSelectedFileName("");

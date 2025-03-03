@@ -1,22 +1,105 @@
-"use client"
-import Link from "next/link";
+// "use client"
+// import Link from "next/link";
 
-export default function Home() {
+// export default function Home() {
+
+//   return (
+//     <div className="z-10 relative h-screen  w-screen flex flex-col gap-6 justify-center items-center bg-gray-100 text-white">
+
+//       <div className="-z-10 absolute top-0 left-0 blur-[2.5px] h-full w-full">
+//         <img className="h-full w-full" src="./homebg.jpeg" alt="Niagara College Toronto Mirvish campus" />
+//       </div>
+
+//       <h1 className="h1 !text-5xl">Welcome to NCT Scheduling Hub</h1>
+//       <Link href="/login" className="btn-primary">
+//         Login
+//       </Link>
+//       {/* <a href='/dashboard' className="btn-primary">Dashboard</a>
+//       <a href='/instructors' className="btn-primary">instructors</a>
+//       <a href='/roombook' className="btn-primary">Room Book</a> */}
+//     </div>
+//   );
+// }
+
+"use client"
+
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+const Login = () => {
+  const router = useRouter();
+
+  const [email, setEmail] = useState('admin@gmail.com' || "")
+  const [password, setPassword] = useState('0000' || "")
+
+  const verifyUser = async (e) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await response.json();
+
+      if (!response.ok) {
+        return alert("Incorrect details. Try again!")
+      }
+      localStorage.setItem('user', JSON.stringify(data));
+      // console.log(data);
+      router.push('/dashboard')
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
-    <div className="z-10 relative h-screen  w-screen flex flex-col gap-6 justify-center items-center bg-gray-100 text-white">
-      
-      <div className="-z-10 absolute top-0 left-0 blur-[2.5px] h-full w-full">
-        <img className="h-full w-full" src="./homebg.jpeg" alt="Niagara College Toronto Mirvish campus" />
-      </div>
+    <div className="bg-n-1 min-h-screen flex-center invert">
+      <div className="bg-gray-100 w-4/5 md:w-1/2 lg:w-1/3 px-5 py-10 rounded-lg drop-shadow-lg">
+        <div className="">
+          <img alt="NCT Logo" src="./nctLogo-black.png" width={220} className='m-auto' />
+          <h2 className="h1 text-center my-7">
+            Log in
+          </h2>
+        </div>
+        <form onSubmit={e => verifyUser(e)}>
+          <div>
+            <label htmlFor="email" className="block font-medium text-gray-900">
+              Email address
+            </label>
+            <div className="">
+              <input id="email" name="email" type="email" required autoComplete="email"
+                value={email} onChange={(e) => setEmail(e.target.value)}
+                className=""
+              />
+            </div>
+          </div>
 
-      <h1 className="h1 !text-5xl">Welcome to NCT Scheduling Hub</h1>
-      <Link href="/login" className="btn-primary">
-        Login
-      </Link>
-      {/* <a href='/dashboard' className="btn-primary">Dashboard</a>
-      <a href='/instructors' className="btn-primary">instructors</a>
-      <a href='/roombook' className="btn-primary">Room Book</a> */}
+          <div className="mt-4">
+            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+              Password
+            </label>
+            <input id="password" name="password" type="password" required autoComplete="current-password"
+              value={password} onChange={(e) => setPassword(e.target.value)}
+              className=""
+            />
+            <div className="text-sm mt-1.5">
+              <a href="#" className="btn-link">
+                Forgot password?
+              </a>
+            </div>
+          </div>
+          <button type="submit" className="btn-primary w-full mt-5">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
-  );
+  )
 }
+
+export default Login

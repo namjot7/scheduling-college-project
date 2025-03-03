@@ -1,11 +1,11 @@
 'use client'
-import Layout from '@/components/Layout'
+import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import React, { useEffect, useState } from 'react'
 import { Calendar } from "@/components/ui/calendar"
 
 const Dashboard = () => {
-    // const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date())
     return (
         <Layout>
             <Section title={'Dashboard'}>
@@ -27,12 +27,12 @@ const Dashboard = () => {
                             <img src="./navbar/classroom.svg" width={35} alt="" />
                         </div>
                     </div>
-                    <Calendar
+                    {/* <Calendar
                         mode="single"
                         selected={date}
                         onSelect={setDate}
                         className="rounded-md border"
-                    />
+                    /> */}
                 </div>
 
 

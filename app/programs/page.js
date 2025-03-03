@@ -1,17 +1,12 @@
 import CourseCard from '@/components/CourseCard'
-import Layout from '@/components/Layout'
+import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import { programs } from '@/public/constants'
-import React from 'react'
 
 const Programs = () => {
-
-
-
     return (
         <Layout>
             <Section title={"Explore our Programs"}>
-
                 <div>
                     {Object.keys(programs).map((category) => (
                         <div key={category} className='mt-10'>
@@ -28,5 +23,4 @@ const Programs = () => {
         </Layout>
     )
 }
-
 export default Programs

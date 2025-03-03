@@ -1,11 +1,11 @@
 import initSql from "@/lib/db";
 import { NextResponse } from "next/server";
 
-const tableName = "master_schedule";
+const tableName = "instructors";
 
-export const GET = async (req) => {
+export const GET = async () => {
     try {
-        const db = await initSql()
+        const db = await initSql();
 
         const query = `SELECT * FROM ${tableName}`;
         const data = await db.query(query);

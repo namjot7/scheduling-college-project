@@ -1,4 +1,4 @@
-import Layout from '@/components/Layout'
+import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import { sampleTeachersData } from '@/public/testData'
 import React from 'react'

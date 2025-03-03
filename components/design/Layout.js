@@ -1,15 +1,11 @@
-"use client"
-import React from 'react'
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
 
 const Layout = ({ children }) => {
-
     return (
-        <div className='flex min-h-screen bg-slate-200'>
+        <div className='flex min-h-screen bg-slate-200 invert'>
             <Navbar />
             {children}
         </div>
     )
 }
-
 export default Layout

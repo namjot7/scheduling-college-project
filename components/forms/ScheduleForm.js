@@ -6,7 +6,7 @@ const ScheduleForm = ({
     setSelectedEntry: setExistingEntry,
     showForm,
     setShowForm,
-    getSchedule
+    getData
 }) => {
     const [formData, setFormData] = useState(existingEntry || {
         s_no: "",
@@ -46,8 +46,7 @@ const ScheduleForm = ({
     // If existingEntry is passed, update formData
     useEffect(() => {
         if (existingEntry) {
-            setFormData(prevData => ({
-                // ...prevData,
+            setFormData({
                 // id: existingEntry.id || "",
                 s_no: existingEntry.s_no || "",
                 session: existingEntry.session || "",
@@ -80,10 +79,9 @@ const ScheduleForm = ({
                 additional_capacity: existingEntry.additional_capacity || "",
                 campus_address_code: existingEntry.campus_address_code || "",
                 credentails_and_qulaifications: existingEntry.credentails_and_qulaifications || "",
-            }));
+            });
         }
-        console.log({ existingEntry });
-
+        // console.log({ existingEntry });
     }, [existingEntry]);
     // console.log(formData);
 
@@ -153,17 +151,17 @@ const ScheduleForm = ({
                 body: JSON.stringify(formData),
             });
 
-            if (res.ok && method=='POST') {
+            if (res.ok && method == 'POST') {
                 alert("Successfully added.")
             }
-            else if (res.ok && method=='PUT') {
+            else if (res.ok && method == 'PUT') {
                 alert("Successfully Updated.")
             }
             // const result = await res.json();
             // console.log("Success:", result);
 
+            getData(); // get the updated changes
             // Reset
-            getSchedule(); // get the updated changes
             setShowForm(false);
             resetForm();
 

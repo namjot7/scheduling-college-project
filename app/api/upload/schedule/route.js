@@ -14,12 +14,12 @@ export const POST = async (req) => {
     const db = await initSql();
     try {
         const formData = await req.formData();
-        const file = formData.get("file");
-        // console.log(file);
+        // console.log(formData);
 
-        // if (!file) {
-        //     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
-        // }
+        const file = formData.get("file");
+        const fileName = formData.get('filename').split('.xlsx')[0];
+        // console.log({ file, fileName });
+
         // Convert file to Buffer
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes)
@@ -48,7 +48,7 @@ export const POST = async (req) => {
         // console.log(jsonData);
 
         // Drop the table if it exists
-        await db.query(`DROP TABLE IF EXISTS ${tableName}`);
+        // await db.query(`DROP TABLE IF EXISTS ${tableName}`);
 
         // Create the new table
 
@@ -61,29 +61,16 @@ export const POST = async (req) => {
         // });
         // console.log({ modifiedcolumns });
 
-        // const columnDefinitions = columns.map(col => {
-        //     const columnName = col.replace(/[\s.&]/g, '_').toLowerCase();
-
-        //     // Define specific column types based on common column names
-        //     if (columnName.includes('date')) {
-        //         return `${columnName} DATE`;  // Stores dates properly
-        //     }
-        //     else if (columnName.includes('time')) {
-        //         return `${columnName} TIME`;  // Stores time correctly
-        //     }
-        //     else if (columnName.includes('datetime')) {
-        //         return `${columnName} DATETIME`; // Stores both date & time
-        //     }
-        //     else {
-        //         return `${columnName} TEXT`;  // Default to TEXT for other columns
-        //     }
-        // }).join(", ");
         const columnDefinitions = columns.map(col => {
-            return `${col.replace(/[\s.&]/g, '_').toLowerCase()} TEXT`; // g means replacement occues globally => \s: space,
+            return `${col.replace(/[\s.&]/g, '_').toLowerCase()} TEXT`; // g means replacement occurs globally => \s: space,
         }).join(", ");
         // console.log({ columnDefinitions });
 
-        const createTableQuery = `CREATE TABLE ${tableName} (id INT AUTO_INCREMENT PRIMARY KEY, ${columnDefinitions});`;
+        const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (
+            id INT AUTO_INCREMENT PRIMARY KEY, 
+            schedule_term VARCHAR(50), 
+            ${columnDefinitions}
+        );`;
         // console.log({ createTableQuery });
 
         await db.query(createTableQuery);
@@ -97,7 +84,10 @@ export const POST = async (req) => {
             }).join(", ");
             // replace single quote with single quote: to prevent SQL Injection
             // console.log({ values });
-            const query = `INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${values})`;
+            const query = `INSERT INTO ${tableName} 
+                (${columns.join(', ')},schedule_term) 
+                VALUES (${values},'${fileName}')`; // fileName is properly wrapped in quotes because it's a string
+
             const data = await db.query(query, values);
             // console.log({ query });
             // console.log(data);

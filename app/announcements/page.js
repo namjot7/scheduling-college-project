@@ -1,8 +1,8 @@
 'use client'
 import { AddBtn, DeleteBtn } from '@/components/design/icons'
-import Layout from '@/components/Layout'
+import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,13 +13,18 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useUserRole } from '@/components/UserContext'
 
 
 const Announcements = () => {
+  const { userName, role } = useUserRole();
+
   const [announcements, setAnnouncements] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+
+  console.log({ userName, role });
 
 
   const getAnnouncements = async () => {
@@ -79,19 +84,7 @@ const Announcements = () => {
   return (
     <Layout>
       <Section title={"Announcements"}>
-        <AddBtn className="absolute top-24 right-4" showForm={setShowDialog} text={"Post"} />
-
-        {/* New annoucmente form */}
-        {/* <form className={'form-basic'} onSubmit={e => createAnnouncement(e)}>
-          <h4 className="h3">Create New Announcement</h4>
-          <input type="text" placeholder="Title" value={title}
-            onChange={(e) => setTitle(e.target.value)} required />
-          <textarea rows="7" placeholder="Description" value={description}
-            onChange={(e) => setDescription(e.target.value)} required />
-          <button type="submit" className="w-full btn-primary mt-5">
-            Submit
-          </button>
-        </form> */}
+        {role == 1 && <AddBtn className="absolute top-24 right-4" showForm={setShowDialog} text={"Post"} />}
 
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
           <DialogContent className="sm:max-w-[625px]" aria-describedby={undefined}>
@@ -130,7 +123,7 @@ const Announcements = () => {
               </div>
               <div className="flex items-end gap-3 flex-col">
                 <div>Posted On: {item.dateCreated.split('T')[0]}</div>
-                <DeleteBtn onClickFunc={() => deleteAnnouncement(item.id)} />
+                {role == 1 && <DeleteBtn onClickFunc={() => deleteAnnouncement(item.id)} />}
               </div>
             </div>
           ))}

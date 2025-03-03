@@ -45,7 +45,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Layout from "@/components/Layout";
+import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
 
 const Users = () => {
