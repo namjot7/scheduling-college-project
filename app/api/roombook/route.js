@@ -28,39 +28,58 @@ export const GET = async (req) => {
 export const POST = async (req) => {
     try {
         const db = await initSql()
-        // const body = await req.json()
+        const body = await req.json()
         // console.log(body);
-        const { fullName, email, department, purpose, room, date, time } = await req.json();
-        console.log({ fullName, email, department, purpose, room, date, time });
 
         // Ensure database table exists and table structure
         await db.query(`
             CREATE TABLE IF NOT EXISTS ${tableName} (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                full_name VARCHAR(255) NOT NULL,
+                fullName VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 department VARCHAR(255) NOT NULL,
                 purpose TEXT NOT NULL,
-                room VARCHAR(50) NOT NULL,
                 date DATE NOT NULL,
-                approved BOOLEAN DEFAULT FALSE,
-                time TIME NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                startTime TIME NOT NULL,
+                endTime TIME NOT NULL,
+                capacity INT NOT NULL,
+                remarks VARCHAR(255) NOT NULL,
+                status INT DEFAULT 2 -- pending 
             )
         `);
 
         // SQL Query (Using Parameterized Queries to Prevent SQL Injection)
         const query = `
-        INSERT INTO ${tableName} (full_name, email, department, purpose, room, date, time,approved)
-        VALUES (?, ?, ?, ?, ?, ?, ?,?)`;
-        const values = [fullName, email, department, purpose, room, date, time, false];
-        console.log(values);
+        INSERT INTO ${tableName} (fullName, email, department, purpose, date, startTime, endTime, capacity,remarks)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        let values = Object.values(body);
+        values = [...values, "", false]
+        // console.log(values);
 
         const data = await db.query(query, values);
-
         return NextResponse.json({ success: true });
     }
     catch (err) {
+        return NextResponse.json({ message: err.message });
+    }
+}
+export const PATCH = async (req) => {
+    try {
+        const db = await initSql()
+
+        const url = new URL(req.url);  // Get the request URL
+        const id = url.searchParams.get('id');  // Get the 'id' query parameter
+        const { status } = await req.json();
+        console.log(id, status);
+
+        await db.query(
+            `UPDATE ${tableName} SET status = ? WHERE id = ?`,
+            [status, id]
+        );
+        return NextResponse.json({ success: true });
+    }
+    catch (error) {
         return NextResponse.json({ message: err.message });
     }
 }
