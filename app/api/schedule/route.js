@@ -30,12 +30,17 @@ export const POST = async (req) => {
 
         // Extract columns and values dynamically
         const columns = Object.keys(body).join(", ");
+        // Extract columns and replace spaces with underscores
+        const modColumns = Object.keys(body)
+            .map(key => key.replace(/\s+/g, '_'))  // Replace spaces with underscores
+            .join(", ");
+
         const values = Object.values(body);
         const placeholders = values.map(() => "?").join(", ");
         // console.log({ columns, values, placeholders });
 
         // Insert into MySQL
-        const query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
+        const query = `INSERT INTO ${tableName} (${modColumns}) VALUES (${placeholders})`;
         await db.query(query, values)
 
         return NextResponse.json(data);

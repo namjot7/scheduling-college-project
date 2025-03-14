@@ -1,11 +1,14 @@
 'use client'
+import AnnounceContent from '@/components/AnnounceContent'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
+import { useUserRole } from '@/components/UserContext'
 import React, { useEffect, useState } from 'react'
-import { Calendar } from "@/components/ui/calendar"
 
 const Dashboard = () => {
     const [date, setDate] = useState(new Date())
+    const { userName, role } = useUserRole();
+
     return (
         <Layout>
             <Section title={'Dashboard'}>
@@ -27,15 +30,8 @@ const Dashboard = () => {
                             <img src="./navbar/classroom.svg" width={35} alt="" />
                         </div>
                     </div>
-                    {/* <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        className="rounded-md border"
-                    /> */}
+                    <AnnounceContent />
                 </div>
-
-
             </Section>
         </Layout>
     )

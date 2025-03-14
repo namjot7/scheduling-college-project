@@ -42,22 +42,22 @@ const Navbar = () => {
                         <img className="invert" src="./navbar/dashboard.svg" width={25} height={25} alt="" />
                         <span>Dashboard</span>
                     </Link>
-                    <Link href={"/schedule"} className={pathName == "/schedule" ? activeLink : inactiveLink} >
+                    {role == 1 && <Link href={"/schedule"} className={pathName == "/schedule" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/schedule.svg" width={25} height={25} alt="" />
                         <span>Master Schedule</span>
-                    </Link>
-                    <Link href={"/announcements"} className={pathName == "/announcements" ? activeLink : inactiveLink} >
+                    </Link>}
+                    {role == 1 && <Link href={"/announcements"} className={pathName == "/announcements" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/announcements.svg" width={25} height={25} alt="" />
                         <span>Announcements</span>
-                    </Link>
+                    </Link>}
                     {role == 1 && <Link href={"/instructors"} className={pathName == "/instructors" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/instructor.svg" width={20} height={20} alt="" />
                         <span className="ml-1">Instructors</span>
                     </Link>}
-                    <Link href={"/classrooms"} className={pathName == "/classrooms" ? activeLink : inactiveLink} >
+                    {role == 1 && <Link href={"/classrooms"} className={pathName == "/classrooms" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/classroom.svg" width={21} height={21} alt="" />
                         <span>Classrooms</span>
-                    </Link>
+                    </Link>}
                     <Link href={"/programs"} className={pathName == "/programs" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/book.svg" width={25} height={25} alt="" />
                         <span>Programs</span>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CourseCard = ({ name, duration, url_link, image_url }) => {
+const CourseCard = ({ name, url_link, image_url }) => {
 
     return (
         <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 group relative overflow-hidden">
@@ -11,7 +11,7 @@ const CourseCard = ({ name, duration, url_link, image_url }) => {
                 />
                 <div className="p-5 pb-1">
                     <h5 className="h3">
-                        {name} ({duration})
+                        {name}
                     </h5>
                     <button className='btn-link flex-center mt-2 text-sm'>
                         Learn more

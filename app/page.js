@@ -31,6 +31,8 @@ const Login = () => {
 
   const [email, setEmail] = useState('admin@gmail.com' || "")
   const [password, setPassword] = useState('0000' || "")
+  // const [email, setEmail] = useState("")
+  // const [password, setPassword] = useState("")
 
   const verifyUser = async (e) => {
     e.preventDefault()
@@ -58,45 +60,54 @@ const Login = () => {
   }
 
   return (
-    <div className="bg-n-1 min-h-screen flex-center invert">
-      <div className="bg-gray-100 w-4/5 md:w-1/2 lg:w-1/3 px-5 py-10 rounded-lg drop-shadow-lg">
-        <div className="">
-          <img alt="NCT Logo" src="./nctLogo-black.png" width={220} className='m-auto' />
-          <h2 className="h1 text-center my-7">
-            Log in
-          </h2>
-        </div>
-        <form onSubmit={e => verifyUser(e)}>
+    <div className="bg-gray-100 min-h-screen flex">
+      {/* side image */}
+      <div className="h-screen relative w-1/2">
+        <img className='object-cover w-full h-full' src="homebg.jpeg" alt="" />
+        <h2 className='absolute top-1/2 left-1/2 bg-white px-5 py-3 !text-3xl h1 -translate-x-1/2 -translate-y-1/2 rounded-md'>NCT Scheduling Hub</h2>
+      </div>
+
+      {/* Login form */}
+      <div className="flex-center  mx-auto w-1/3 drop-shadow-lg m-10">
+        <div className="bg-n-1 w-full px-5 py-10 rounded-lg ">
           <div>
-            <label htmlFor="email" className="block font-medium text-gray-900">
-              Email address
-            </label>
-            <div className="">
-              <input id="email" name="email" type="email" required autoComplete="email"
-                value={email} onChange={(e) => setEmail(e.target.value)}
+            <img alt="NCT Logo" src="./nctLogo-black.png" width={220} className='m-auto' />
+            <h2 className="h1 text-center my-7">
+              Log in
+            </h2>
+          </div>
+          <form onSubmit={e => verifyUser(e)}>
+            <div>
+              <label htmlFor="email" className="block font-medium text-gray-900">
+                Email address
+              </label>
+              <div className="">
+                <input id="email" name="email" type="email" required autoComplete="email"
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  className=""
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                Password
+              </label>
+              <input id="password" name="password" type="password" required autoComplete="current-password"
+                value={password} onChange={(e) => setPassword(e.target.value)}
                 className=""
               />
+              <div className="text-sm mt-1.5">
+                <a href="#" className="btn-link">
+                  Forgot password?
+                </a>
+              </div>
             </div>
-          </div>
-
-          <div className="mt-4">
-            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-              Password
-            </label>
-            <input id="password" name="password" type="password" required autoComplete="current-password"
-              value={password} onChange={(e) => setPassword(e.target.value)}
-              className=""
-            />
-            <div className="text-sm mt-1.5">
-              <a href="#" className="btn-link">
-                Forgot password?
-              </a>
-            </div>
-          </div>
-          <button type="submit" className="btn-primary w-full mt-5">
-            Login
-          </button>
-        </form>
+            <button type="submit" className="btn-primary w-full mt-5">
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )

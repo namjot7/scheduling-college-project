@@ -1,22 +1,34 @@
 'use client'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
+import { useUserRole } from '@/components/UserContext';
 import React, { useEffect, useState } from 'react'
 
 const RoomBook = () => {
+    const { username, role } = useUserRole();
     const [roomRequests, setRoomRequests] = useState([]);
 
-    const [form, setForm] = useState({
-        fullName: '' || "namjot",
-        email: '' || "namjot@gmail.com",
-        department: '' || "academics",
-        purpose: '' || "for event",
-        date: '' || "2025-11-11",
-        startTime: '' || "14:00",
-        endTime: '' || "14:00",
-        capacity: '' || 25,
-    });
+    // const [form, setForm] = useState({
+    //     fullName: '' || "namjot",
+    //     email: '' || "namjot@gmail.com",
+    //     department: '' || "academics",
+    //     purpose: '' || "for event",
+    //     date: '' || "2025-11-11",
+    //     startTime: '' || "14:00",
+    //     endTime: '' || "14:00",
+    //     capacity: '' || 25,
+    // });
 
+    const [form, setForm] = useState({
+        fullName: '',
+        email: '',
+        department: '',
+        purpose: '',
+        date: '',
+        startTime: '',
+        endTime: '',
+        capacity: '',
+    });
 
     useEffect(() => {
         getRoomRequests()
@@ -52,20 +64,22 @@ const RoomBook = () => {
         // console.log(data);
         getRoomRequests()
 
-        // if (response.ok) {
-        //     alert("Room booked successfully!");
-        //     // Reset form after successful submission
-        //     setFullName("");
-        //     setEmail("");
-        //     setDepartment("");
-        //     setPurpose("");
-        //     setRoom("Room 101");
-        //     setDate("");
-        //     setStartTime("");
-        //     setEndTime("");
-        // } else {
-        //     alert("Failed to book the room.");
-        // }
+        if (response.ok) {
+            alert("Room request sent successfully!");
+            // Reset form after successful submission
+            setForm({
+                fullName: '',
+                email: '',
+                department: '',
+                purpose: '',
+                date: '',
+                startTime: '',
+                endTime: '',
+                capacity: '',
+            })
+        } else {
+            alert("Failed to book the room.");
+        }
     }
     const updateApprovalStatus = async (id, status) => {
         console.log(id, status);
@@ -92,27 +106,27 @@ const RoomBook = () => {
                 <div className="p-6 rounded-lg shadow-lg w-full text-black flex flex-wrap gap-5">
 
                     {/* User: Room book form */}
-                    <form onSubmit={e => handleForm(e)} className='w-full shadow-md lg:w-1/2 px-10 py-5 bg-gray-100'>
+                    {role != 1 && <form onSubmit={e => handleForm(e)} className='w-full shadow-md lg:w-1/2 px-10 py-5 bg-gray-100'>
                         <h2 className="h2">Book a Room</h2>
 
                         <label>Full Name</label>
-                        <input type='text' name="fullName" value={form.fullName} onChange={e => handleChange(e)} />
+                        <input type='text' name="fullName" value={form.fullName} onChange={e => handleChange(e)} required />
 
                         <label>Contact Email</label>
-                        <input type='text' name="email" value={form.email} onChange={e => handleChange(e)} />
+                        <input type='text' name="email" value={form.email} onChange={e => handleChange(e)} required />
 
                         <label>Department</label>
-                        <input type='text' name="department" value={form.department} onChange={e => handleChange(e)} />
+                        <input type='text' name="department" value={form.department} onChange={e => handleChange(e)} required />
 
                         <label>Capacity Required</label>
-                        <input type='number' name="capacity" value={form.capacity} onChange={e => handleChange(e)} />
+                        <input type='number' name="capacity" value={form.capacity} onChange={e => handleChange(e)} required />
 
                         <label>Purpose</label>
-                        <textarea className='input' placeholder="Enter purpose of booking" rows={3} name="purpose" value={form.purpose} onChange={e => handleChange(e)} />
+                        <textarea className='input' placeholder="Enter purpose of booking" rows={3} name="purpose" value={form.purpose} onChange={e => handleChange(e)} required />
 
 
                         {/* <label className="block mb-2 font-medium">Select Room</label>
-                        <select className='input' value={form.room} onChange={e=>handleChange(e)}/>
+                        <select className='input' value={form.room} onChange={e=>handleChange(e)} required/>
                             <option>Room 101</option>
                             <option>Room 102</option>
                             <option>Room 103</option>
@@ -121,68 +135,72 @@ const RoomBook = () => {
                         <div className="flex gap-4">
                             <div>
                                 <label>Date</label>
-                                <input type="date" name='date' value={form.date} onChange={e => handleChange(e)} />
+                                <input type="date" name='date' value={form.date} onChange={e => handleChange(e)} required />
                             </div>
                             <div>
                                 <label>Start Time</label>
-                                <input type="time" name='startTime' value={form.startTime} onChange={e => handleChange(e)} />
+                                <input type="time" name='startTime' value={form.startTime} onChange={e => handleChange(e)} required />
                             </div>
                             <div>
                                 <label>End Time</label>
-                                <input type="time" name='endTime' value={form.endTime} onChange={e => handleChange(e)} />
+                                <input type="time" name='endTime' value={form.endTime} onChange={e => handleChange(e)} required />
                             </div>
                             {/* <div>
                                 <label>End startTime</label>
-                                <input type="starttime" value={form.starttime} onChange={e=>handleChange(e)}/>value)} />
+                                <input type="starttime" value={form.starttime} onChange={e=>handleChange(e)} required/>value)} />
                             </div> */}
                         </div>
 
                         <button type="submit" className="btn-primary w-full mt-5">
                             Submit Request
                         </button>
-                    </form>
+                    </form>}
 
                     {/* Admin: Room book requests */}
-                    <div className='w-full'>
+                    {role == 1 && <div className='w-full'>
                         <h2 className="h2">Requests</h2>
                         <div className="flex gap-4  flex-col">
                             {roomRequests?.length > 0 && roomRequests.map(item => (
-                                <div key={item.id} className="bg-white flex-between p-6 rounded-lg shadow-lg mb-4">
-                                    <ul>
-                                        <li className="h4">User Details</li>
-                                        <li>{item.fullName}</li>
-                                        <li>{item.email}</li>
-                                        <li>{item.department}</li>
-                                    </ul>
-                                    <ul>
-                                        <li className="h4">Booking Details</li>
-                                        <li>{item.purpose}</li>
-                                        <li>{item.room}</li>
-                                        <li>Capacity: {item.capacity}</li>
-                                        <li>{item.date.split('T')[0]}</li>
-                                        <li>{item.startTime.slice(0, 5)} to {item.endTime.slice(0, 5)}</li>
-                                    </ul>
-                                    <div className={`flex items-center justify-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'text-green-500' : 'text-red-500'}`}>
-                                        {item.status === 1
-                                            ? "Done"
-                                            : item.status === 2
-                                                ? "Pending"
-                                                : "Rejected"}
+                                <div key={item.id} className='bg-white shadow-lg mb-4 p-6 rounded-lg '>
+                                    <div className="flex-between ">
+                                        <ul>
+                                            <li className="h4">User Details</li>
+                                            <li>{item.fullName}</li>
+                                            <li>{item.email}</li>
+                                            <li>{item.department}</li>
+                                        </ul>
+                                        <ul>
+                                            <li className="h4">Booking Details</li>
+                                            <li>{item.purpose}</li>
+                                            <li>{item.room}</li>
+                                            <li>Capacity: {item.capacity}</li>
+                                            <li>{item.date.split('T')[0]}</li>
+                                            <li>{item.startTime.slice(0, 5)} to {item.endTime.slice(0, 5)}</li>
+                                        </ul>
+
+                                        <div className={`flex-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'btn-success' : 'btn-danger'}`}>
+                                            {item.status === 1
+                                                ? "Done"
+                                                : item.status === 2
+                                                    ? "Pending"
+                                                    : "Rejected"}
+                                        </div>
+                                        {item.status == 2 && <div className="flex gap-2">
+                                            <button className="btn-success" onClick={e => updateApprovalStatus(item.id, 1)}>Approve</button>
+                                            <button className="btn-danger" onClick={e => updateApprovalStatus(item.id, 0)}>Reject</button>
+                                        </div>}
                                     </div>
-                                    {item.status == 2 && <div className="flex gap-2">
-                                        <button className="btn-success" onClick={e => updateApprovalStatus(item.id, 1)}>Approve</button>
-                                        <button className="btn-danger" onClick={e => updateApprovalStatus(item.id, 0)}>Reject</button>
-                                    </div>}
+                                    <input className='w-1/2 !py-1 mt-5' type="text" name="" placeholder='Remarks' id="" />
                                 </div>
                             ))
                             }
                         </div >
-                    </div >
+                    </div >}
 
                     {/* Request status */}
-                    <div className="min-h-40 bg-gray-400">
+                    {/* {role != 1 && <div className="min-h-40 bg-gray-400">
                         dfd
-                    </div>
+                    </div>} */}
                 </div >
             </Section >
         </Layout >

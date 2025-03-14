@@ -4,27 +4,12 @@ import { DeleteBtn } from '@/components/design/icons'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
+import { useUserRole } from '@/components/UserContext'
 import React, { useEffect, useState } from 'react'
 
 const AcademicFiles = () => {
-    const [uploadedFiles, setUploadedFiles] = useState([
-        // {
-        //     name: "details.xlsx",
-        //     type: "xlsx"
-        // },
-        // {
-        //     name: "details.pdf",
-        //     type: "pdf"
-        // },
-        // {
-        //     name: "details.docx",
-        //     type: "docx"
-        // },
-        // {
-        //     name: "details.et",
-        //     type: "et"
-        // }
-    ]); // array of strings (containing file info (name and type))
+    const { username, role } = useUserRole();
+    const [uploadedFiles, setUploadedFiles] = useState([]); // array of strings (containing file info (name and type))
 
     const getFiles = async () => {
         const res = await fetch('/api/academicFiles')
@@ -54,10 +39,10 @@ const AcademicFiles = () => {
     return (
         <Layout>
             <Section title={"Academic Files"}>
-                <UploadButton
+                {role == 1 && <UploadButton
                     apiEndPoint={'academicFiles'}
                     getData={getFiles}
-                />
+                />}
                 <h3 className="h3 mt-10 mb-5">Existing Files</h3>
                 <div className="flex gap-7 flex-col">
                     {uploadedFiles?.length > 0 && uploadedFiles.map((file, idx) => (
@@ -67,7 +52,7 @@ const AcademicFiles = () => {
                                 {file?.name}
                             </div>
                             <div className='flex gap-2'>
-                                <DeleteBtn onClickFunc={() => deleteFile(file.name)} />
+                                {role == 1 && <DeleteBtn onClickFunc={() => deleteFile(file.name)} />}
                                 <a href={`./uploads/academic_files/${file.name}`} className='btn-primary'>
                                     <img src="./svg/download.svg" alt="download icon" />
                                 </a>

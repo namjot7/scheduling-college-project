@@ -1,5 +1,7 @@
+// 'use client'
+
+// import Layout from '@/components/design/Layout'
 // import UserCard from '@/components/design/UserCard'
-// import Layout from '@/components/Layout'
 // import Section from '@/components/Section'
 // import React from 'react'
 

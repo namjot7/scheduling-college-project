@@ -1,5 +1,6 @@
+"use client"
 import React from 'react'
-import { useUserRole } from './UserContext'
+import { useUserRole } from './UserContext';
 
 const Section = ({ title, children }) => {
     const { userName, role } = useUserRole();

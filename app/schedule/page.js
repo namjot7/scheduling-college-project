@@ -147,7 +147,7 @@ const Schedules = () => {
                 <div>
                     {/* Heading and Schedule dropdown */}
                     <div className="flex-between mb-2">
-                        <h2 className="h2">Winter 2025</h2>
+                        <h2 className="h2 capitalize">{selectedTerm}</h2>
                         <div>
                             <select className='input' value={selectedTerm} onChange={(e) => setSelectedTerm(e.target.value)}>
                                 <option value="winter_2025">Winter 2025</option>
