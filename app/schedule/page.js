@@ -20,9 +20,10 @@ import { useUserRole } from '@/components/UserContext'
 
 const Schedules = () => {
     const { userName, role } = useUserRole()
-    console.log(userName, role);
+    // console.log(userName, role);
 
     const [selectedTerm, setSelectedTerm] = useState("winter_2025");
+    const [terms, setTerms] = useState([])
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
     const [filteredByTermSchedule, setFilteredByTermSchedule] = useState([]); // Term: winter, spring, fall
@@ -73,17 +74,20 @@ const Schedules = () => {
     const getSchedule = async () => {
         const res = await fetch('/api/schedule');
         const result = await res.json();
-        // console.log(result);
+        console.log(result);
 
         const data = result.data[0];
         const columnsData = result.columnsData[0];
         let modCols = columnsData.map(item => item.COLUMN_NAME);
+        let termsData = result.terms;
         // console.log(modCols); // Get column_name
+        // console.log(termsData);
 
         initVisibility(modCols);
 
         setScheduleInfo(data);
         setColumns(modCols);
+        setTerms(termsData);
     }
     const editData = async (id) => {
         setShowForm(true);
@@ -150,9 +154,9 @@ const Schedules = () => {
                         <h2 className="h2 capitalize">{selectedTerm}</h2>
                         <div>
                             <select className='input' value={selectedTerm} onChange={(e) => setSelectedTerm(e.target.value)}>
-                                <option value="winter_2025">Winter 2025</option>
-                                <option value="spring_2025">Spring 2025</option>
-                                <option value="fall_2025">Fall 2025</option>
+                                {terms?.length > 0 && terms.map(term => (
+                                    <option key={term} value={term}>{term}</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -179,8 +183,9 @@ const Schedules = () => {
                             </button>
                         </div>
                     </div>
+
+                    {/* Column Visibility Toggle Controls and Delete schedule button */}
                     <div className='relative'>
-                        {/* Column Visibility Toggle Controls */}
                         {/* Extract all the keys from the object and create an array of them => ['id', 'name', 'course', 'semester']*/}
                         <Sheet>
                             <SheetTrigger asChild>
@@ -213,7 +218,7 @@ const Schedules = () => {
                         </Sheet>
 
                         {role == 1 && <DeleteBtn
-                            text={`Delete Schedule`}
+                            text={`Delete`}
                             className="absolute top-0 right-0 gap-2"
                             onClickFunc={() => deleteSchedule(selectedTerm)}
                         />}
@@ -224,6 +229,7 @@ const Schedules = () => {
                         selectedEntry={selectedEntry} setSelectedEntry={setSelectedEntry}
                         showForm={showForm} setShowForm={setShowForm}
                         getData={getSchedule}
+                        selectedTerm={selectedTerm}
                     />
 
                     {/* Table */}
@@ -247,7 +253,6 @@ const Schedules = () => {
                                         {columns.map((col, index) =>
                                             visibleColumns[col] && <td key={index}>{item[col]}</td>
                                         )}
-
                                     </tr>
                                 ))}
                             </tbody>

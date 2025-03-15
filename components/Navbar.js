@@ -23,7 +23,7 @@ const Navbar = () => {
     const activeLink = inactiveLink + " invert bg-black";
 
     const signOut = () => {
-        console.log('sign out clicked');
+        // console.log('sign out clicked');
         localStorage.setItem('user', null)
         setRole("")
         setUserName("")

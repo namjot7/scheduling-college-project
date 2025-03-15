@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import * as XLSX from 'xlsx';
 import initSql from "@/lib/db";
 
-const tableName = "master_schedule";
+const tableName = "classrooms";
 
 // Ensure Next.js does not parse the request body automatically
 export const config = {
@@ -16,9 +16,11 @@ export const POST = async (req) => {
         const formData = await req.formData();
         // console.log(formData);
 
+        const deleteQuery = `DROP TABLE IF EXISTS ${tableName}`;
+        await db.query(deleteQuery);
+
         const file = formData.get("file");
-        const fileName = formData.get('filename').split('.xlsx')[0];
-        // console.log({ file, fileName });
+        // console.log(file);
 
         // Convert file to Buffer
         const bytes = await file.arrayBuffer();
@@ -53,25 +55,22 @@ export const POST = async (req) => {
         let columns = Object.keys(jsonData[0]);
         // console.log(columns);
 
-        // let modifiedcolumns = columns.map(col => {
-        //     return `${col.replace(/[\s.&]/g, '_').toLowerCase()}`; // g means replacement occues globally => \s: space,
-        // });
-        // console.log({ modifiedcolumns });
+        let modifiedColumns = columns.map(col => {
+            return `${col.replace(/[\s.&]/g, '_').toLowerCase()}`; // g means replacement occues globally => \s: space,
+        });
+        // console.log({ modifiedColumns });
 
-        const columnDefinitions = columns.map(col => {
+        const columnDefinitions = modifiedColumns.map(col => {
             return `${col.replace(/[\s.&]/g, '_').toLowerCase()} TEXT`; // g means replacement occurs globally => \s: space,
         }).join(", ");
-        // console.log({ columnDefinitions });
+        console.log({ columnDefinitions });
 
         const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (
             id INT AUTO_INCREMENT PRIMARY KEY, 
-            schedule_term VARCHAR(50), 
             ${columnDefinitions}
         );`;
         // console.log({ createTableQuery });
-
         await db.query(createTableQuery);
-        // console.log(`Table ${tableName} created successfully`);
 
         // Insert Excel data into database
         for (const row of jsonData) {
@@ -81,10 +80,11 @@ export const POST = async (req) => {
             }).join(", ");
             // replace single quote with single quote: to prevent SQL Injection
             // console.log({ values });
-            const query = `INSERT INTO ${tableName} 
-                (${columns.join(', ')},schedule_term) 
-                VALUES (${values},'${fileName}')`; // fileName is properly wrapped in quotes because it's a string
 
+            const query = `INSERT INTO ${tableName} 
+                    (${modifiedColumns.join(', ')}) 
+                    VALUES (${values})`
+                ; // fileName is properly wrapped in quotes because it's a string
             const data = await db.query(query, values);
             // console.log({ query });
             // console.log(data);
@@ -92,6 +92,6 @@ export const POST = async (req) => {
         return NextResponse.json({ success: true, columns });
     }
     catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message });
     }
 }

@@ -9,7 +9,8 @@ import InstructorForm from '@/components/forms/InstructorForm'
 
 const Instructors = () => {
     const [selectedTerm, setSelectedTerm] = useState("winter_2025");
-    const [scheduleInfo, setInstructorsInfo] = useState([]);
+    const [terms, setTerms] = useState([])
+    const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
     const [filteredByTermSchedule, setFilteredByTermSchedule] = useState([]); // Term: winter, spring, fall
     const [columns, setColumns] = useState([]);
@@ -53,16 +54,18 @@ const Instructors = () => {
     const getInstructors = async () => {
         const res = await fetch('/api/instructors');
         const result = await res.json();
-        console.log(result);
+        // console.log(result);
 
         const data = result.data[0];
         const columnsData = result.columnsData[0];
         let modCols = columnsData.map(item => item.COLUMN_NAME);
-        console.log(modCols); // Get column_name
+        // console.log(modCols); // Get column_name
+        let termsData = result.terms;
+        console.log(termsData);
 
-
-        setInstructorsInfo(data);
+        setScheduleInfo(data);
         setColumns(modCols);
+        setTerms(termsData)
     }
     const editData = async (id) => {
         setShowForm(true);
@@ -88,13 +91,10 @@ const Instructors = () => {
             getInstructors();
         }
     }
-    // Function to Export Data as Excel
     const downloadExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(displayData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Schedule");
-
-        // Generate Excel file and trigger download
         XLSX.writeFile(workbook, `instructors_${selectedTerm}.xlsx`);
     };
 
@@ -107,9 +107,9 @@ const Instructors = () => {
                         <h2 className="h2">Winter 2025</h2>
                         <div>
                             <select className='input' value={selectedTerm} onChange={(e) => setSelectedTerm(e.target.value)}>
-                                <option value="winter_2025">Winter 2025</option>
-                                <option value="spring_2025">Spring 2025</option>
-                                <option value="fall_2025">Fall 2025</option>
+                                {terms?.length > 0 && terms.map(term => (
+                                    <option key={term} value={term}>{term}</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -136,10 +136,9 @@ const Instructors = () => {
                             </button>
                         </div>
                     </div>
-                    <div className='relative'>
+                    <div className='flex justify-end mb-5'>
                         <DeleteBtn
-                            text={`Delete Schedule`}
-                            className="absolute top-0 right-0 gap-2"
+                            text={`Delete`}
                             onClickFunc={() => deleteSchedule(selectedTerm)}
                         />
                     </div>
@@ -149,6 +148,7 @@ const Instructors = () => {
                         selectedEntry={selectedEntry} setSelectedEntry={setSelectedEntry}
                         showForm={showForm} setShowForm={setShowForm}
                         getData={getInstructors}
+                        selectedTerm={selectedTerm}
                     />
 
                     {/* Table */}

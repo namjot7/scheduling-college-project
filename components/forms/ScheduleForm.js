@@ -6,9 +6,11 @@ const ScheduleForm = ({
     setSelectedEntry: setExistingEntry,
     showForm,
     setShowForm,
-    getData
+    getData,
+    selectedTerm
 }) => {
     const [formData, setFormData] = useState(existingEntry || {
+        schedule_term: selectedTerm,
         s_no: "",
         session: "",
         program: "",
@@ -43,12 +45,21 @@ const ScheduleForm = ({
     });
     // console.log(existingEntry);
 
+    // To load schedule term
+    useEffect(() => {
+        if (!existingEntry) { // Only update for new entries
+            setFormData(prev => ({
+                ...prev,
+                schedule_term: selectedTerm,
+            }));
+        }
+    }, [selectedTerm]);
+
     // If existingEntry is passed, update formData
     useEffect(() => {
         if (existingEntry) {
             setFormData({
-                // id: existingEntry.id || "",
-                s_no: existingEntry.s_no || "",
+                schedule_term: existingEntry.schedule_term || selectedTerm,
                 session: existingEntry.session || "",
                 program: existingEntry.program || "",
                 intake_id: existingEntry.intake_id || "",
@@ -161,7 +172,6 @@ const ScheduleForm = ({
             // console.log("Success:", result);
 
             getData(); // get the updated changes
-            // Reset
             setShowForm(false);
             resetForm();
 
@@ -194,6 +204,7 @@ const ScheduleForm = ({
                                                     "text"
                                     }
                                     name={key}
+                                    required
                                     value={formData[key]} onChange={e => handleChange(e)}
                                 />
                             </div>

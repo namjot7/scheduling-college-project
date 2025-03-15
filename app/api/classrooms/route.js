@@ -1,11 +1,11 @@
 import initSql from "@/lib/db";
 import { NextResponse } from "next/server";
 
-const tableName = "master_schedule";
+const tableName = "classrooms";
 
-export const GET = async (req) => {
+export const GET = async () => {
     try {
-        const db = await initSql()
+        const db = await initSql();
 
         // get all the data
         const query = `SELECT * FROM ${tableName}`;
@@ -17,12 +17,7 @@ export const GET = async (req) => {
                     WHERE TABLE_NAME = '${tableName}';`;
         const columnsData = await db.query(getColumnsQuery);
 
-        // get schedule term
-        const [rows] = await db.execute(`SELECT DISTINCT schedule_term FROM ${tableName}`);
-        const terms = rows.map(row => row.schedule_term);
-        // console.log('terms: ', terms);
-
-        return NextResponse.json({ data, columnsData,terms });
+        return NextResponse.json({ data, columnsData });
     }
     catch (err) {
         return NextResponse.json({ success: false, message: err.message });
@@ -37,20 +32,15 @@ export const POST = async (req) => {
 
         // Extract columns and values dynamically
         const columns = Object.keys(body).join(", ");
-        // Extract columns and replace spaces with underscores
-        const modColumns = Object.keys(body)
-            .map(key => key.replace(/\s+/g, '_'))  // Replace spaces with underscores
-            .join(", ");
-
         const values = Object.values(body);
         const placeholders = values.map(() => "?").join(", ");
         // console.log({ columns, values, placeholders });
 
         // Insert into MySQL
-        const query = `INSERT INTO ${tableName} (${modColumns}) VALUES (${placeholders})`;
+        const query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
         await db.query(query, values)
 
-        return NextResponse.json(data);
+        return NextResponse.json({ message: "Data posted" });
     }
     catch (err) {
         return NextResponse.json({ success: false, message: err.message });
@@ -84,22 +74,20 @@ export const DELETE = async (req) => {
 
         const url = new URL(req.url);
         const id = url.searchParams.get('id');
-        const termToDelete = url.searchParams.get('selectedTerm');
-        // console.log({ url, id, termToDelete });
-        let data;
+        const deleteTable = url.searchParams.get('deleteAll');
+        // console.log(url);
+        console.log({ url, id, deleteTable });
 
-        // to delete one entry
+        let data;
         if (id) {
             const query = `DELETE FROM ${tableName} WHERE id=?`;
             data = await db.query(query, [id]); // should be in array format
         }
-        // to delete one specific term schedule
-        else if (termToDelete) {
-            const query = `DELETE FROM ${tableName} WHERE schedule_term=?`;
-            data = await db.query(query, [termToDelete]); // should be in array format
+        else if (deleteTable) {
+            const deleteQuery = `DROP TABLE ${tableName}`
+            await db.query(deleteQuery)
         }
-
-        return NextResponse.json({ message: "Deleted successfully", data });
+        return NextResponse.json({ message: "Deleted successfully" });
     }
     catch (err) {
         return NextResponse.json({ success: false, message: err.message });

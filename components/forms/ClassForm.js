@@ -1,50 +1,30 @@
 'use client';
 import React, { useEffect, useState } from 'react'
 
-const InstructorForm = ({
+const ClassForm = ({
     selectedEntry: existingEntry,
     setSelectedEntry: setExistingEntry,
     showForm,
     setShowForm,
     getData,
-    selectedTerm,
 }) => {
     const [formData, setFormData] = useState(existingEntry || {
-        schedule_term: selectedTerm,
-        s_no: "",
-        name: "",
-        work_email: "",
-        alternate_email: "",
-        contact_no: "",
-        bachelors: "",
-        bachelors_specialty: "",
-        masters: "",
-        masters_specialty: "",
-        phd: "",
-        phd_specialty: "",
-        working_experience: "",
-        length_of_total_industry_experience_years: "",
-        length_of_total_teaching_experience_years: "",
-        programs_taught_1: ""
+        campus: "",
+        floor: "",
+        room: "",
+        capacity: "",
+        seating_arrangement: "",
+        specification: "",
+        equipment_in_room: "",
+        type_of_board: ""
     });
     // console.log(existingEntry);
-
-    // To load schedule term
-    useEffect(() => {
-        if (!existingEntry) { // Only update for new entries
-            setFormData(prev => ({
-                ...prev,
-                schedule_term: selectedTerm,
-            }));
-        }
-    }, [selectedTerm]);
 
     // If existingEntry is passed, update formData
     useEffect(() => {
         if (existingEntry) {
             setFormData(existingEntry);
         }
-        // console.log({ existingEntry });
     }, [existingEntry]);
 
     const handleChange = (e) => {
@@ -64,55 +44,43 @@ const InstructorForm = ({
     const resetForm = () => {
         setExistingEntry(null);
         setFormData({
-            schedule_term: "",
-            s_no: "",
-            name: "",
-            work_email: "",
-            alternate_email: "",
-            contact_no: "",
-            bachelors: "",
-            bachelors_specialty: "",
-            masters: "",
-            masters_specialty: "",
-            phd: "",
-            phd_specialty: "",
-            working_experience: "",
-            length_of_total_industry_experience_years: "",
-            length_of_total_teaching_experience_years: "",
-            programs_taught_1: ""
+            campus: "",
+            floor: "",
+            room: "",
+            capacity: "",
+            seating_arrangement: "",
+            specification: "",
+            equipment_in_room: "",
+            type_of_board: ""
         });
     }
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent page refresh
         // console.log(formData);
 
-        try {
-            const url = existingEntry ? `/api/instructors/?id=${existingEntry.id}` : "/api/instructors"
-            const method = existingEntry ? "PUT" : "POST";
+        const url = existingEntry ? `/api/classrooms/?id=${existingEntry.id}` : "/api/classrooms"
+        const method = existingEntry ? "PUT" : "POST";
 
-            const res = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
 
-            if (res.ok && method == 'POST') {
-                alert("Successfully added.")
-            }
-            else if (res.ok && method == 'PUT') {
-                alert("Successfully Updated.")
-            }
-            // const result = await res.json();
-            // console.log("Success:", result);
-
-            getData(); // get the updated changes
-            setShowForm(false); // Reset
-            resetForm();
-        } catch (error) {
-            console.error("Error:", error);
+        if (res.ok && method == 'POST') {
+            alert("Successfully added.")
         }
+        else if (res.ok && method == 'PUT') {
+            alert("Successfully Updated.")
+        }
+        // const result = await res.json();
+        // console.log("Success:", result);
+
+        getData(); // get the updated changes
+        setShowForm(false); // Reset
+        resetForm();
     };
 
 
@@ -155,4 +123,4 @@ const InstructorForm = ({
     );
 };
 
-export default InstructorForm;
+export default ClassForm;

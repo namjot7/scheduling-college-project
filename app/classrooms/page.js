@@ -1,44 +1,156 @@
+'use client'
+import { DeleteBtn, EditBtn } from '@/components/design/icons'
 import Layout from '@/components/design/Layout'
+import ClassForm from '@/components/forms/ClassForm'
 import Section from '@/components/Section'
-import { sampleTeachersData } from '@/public/testData'
-import React from 'react'
+import UploadButton from '@/components/UploadButton'
+import React, { useEffect, useState } from 'react'
+import * as XLSX from "xlsx";
 
 const ClassRooms = () => {
+    const [scheduleInfo, setScheduleInfo] = useState([]);
+    const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
+    const [columns, setColumns] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    let displayData;
+    if (searchTerm) displayData = filteredSchedule;
+    else displayData = scheduleInfo;
+
+    const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited 
+    const [showForm, setShowForm] = useState(false);
+
+    // Load schedules when page is loaded
+    useEffect(() => {
+        getClasses();
+    }, []);
+
+    // Search for all fields
+    useEffect(() => {
+        let lowerSearchTerm = searchTerm.toLowerCase();
+        let updatedSchedule = scheduleInfo.filter(item =>
+            Object.values(item).some(value =>
+                value && value.toString().toLowerCase().includes(lowerSearchTerm)
+            )
+        );
+        setFilteredSchedule(updatedSchedule);
+    }, [searchTerm])
+
+    const getClasses = async () => {
+        const res = await fetch('/api/classrooms');
+        const result = await res.json();
+        // console.log(result);
+
+        const data = result.data[0];
+        const columnsData = result.columnsData[0];
+        let modCols = columnsData.map(item => item.COLUMN_NAME);
+        // console.log(modCols);
+
+        setScheduleInfo(data);
+        setColumns(modCols);
+    }
+    const editData = async (id) => {
+        setShowForm(true);
+        const itemToEdit = scheduleInfo.find(item => item.id === id);
+        // console.log(itemToEdit);
+        setSelectedEntry(itemToEdit);
+    }
+    const deleteEntry = async (id) => {
+        let confirmDelete = confirm("Are you sure you want to delete this entry?\nThis action cannot be reversed.")
+        if (confirmDelete) {
+            await fetch(`/api/classrooms?id=${id}`, {
+                method: 'DELETE',
+            });
+            getClasses();
+        }
+    }
+    const deleteSchedule = async () => {
+        let confirmDelete = confirm(`Are you sure you want to delete the schedule"?\nThis action cannot be reversed.`)
+        if (confirmDelete) {
+            await fetch(`/api/classrooms?deleteAll=true`, {
+                method: 'DELETE',
+            });
+            getClasses();
+        }
+    }
+    const downloadExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(displayData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Schedule");
+        XLSX.writeFile(workbook, `classrooms.xlsx`);
+    };
     return (
         <Layout>
             <Section title={"Classrooms Details"}>
-                {/* Test table */}
-                <div className="overflow-auto max-w-[70vw] max-h-[80vh]">
-                    <table className="table-basic">
-                        <thead>
-                            <tr>
-                                <th>Campus</th>
-                                <th>Floor</th>
-                                <th>Room Capacity</th>
-                                <th>Seating Arrngement</th>
-                                <th>Specification</th>
-                                <th>Equipment in room</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Mirvish</td>
-                                <td>2</td>
-                                <td>222</td>
-                                <td>45</td>
-                                <td></td>
-                                <td>Projector</td>
-                            </tr>
-                            <tr>
-                                <td>Mirvish</td>
-                                <td>3</td>
-                                <td>301</td>
-                                <td>30</td>
-                                <td></td>
-                                <td>Projector + Computers</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div>
+                    {/* Edit and Add Dialog */}
+                    <ClassForm
+                        selectedEntry={selectedEntry} setSelectedEntry={setSelectedEntry}
+                        showForm={showForm} setShowForm={setShowForm}
+                        getData={getClasses}
+                    />
+
+                    {/* Heading and Schedule dropdown */}
+                    <div className="flex-between mb-2">
+                        <h2 className="h2">Winter 2025</h2>
+                    </div>
+                    {/* Search and Download Excel & Add Entry buttons */}
+                    <div className="flex-between my-5">
+                        <div className="relative">
+                            <img className='absolute top-2 left-2' src="./svg/search.svg" alt="" />
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="pl-10 rounded-md "
+                            />
+                        </div>
+                        <div className='flex gap-3'>
+                            <button onClick={() => setShowForm(!showForm)} className='btn-primary flex-center'>
+                                <img src="./svg/plus.svg" alt="" />
+                                Add Entry
+                            </button>
+                            <button className="btn-primary flex" onClick={() => downloadExcel()}>
+                                <img src="./svg/download.svg" alt="download icon" />
+                                Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div className='flex justify-end mb-5'>
+                        <DeleteBtn
+                            text={`Delete`}
+                            onClickFunc={() => deleteSchedule()}
+                        />
+                    </div>
+
+                    {/* Table */}
+                    <div className="overflow-scroll max-w-[70vw] max-h-[80vh]">
+                        <table className="table-basic">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    {columns.map((col, index) => (
+                                        <th key={index}>{col}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {displayData.map((item, idx) => (
+                                    <tr key={idx} className='relative'>
+                                        <td className="flex gap-3">
+                                            <EditBtn onClickFunc={() => editData(item.id)} />
+                                            <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
+                                        </td>
+                                        {columns.map((col, index) =>
+                                            <td key={index}>{item[col]}</td>
+                                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <UploadButton apiEndPoint={"classrooms"} getData={getClasses} />
                 </div>
             </Section>
         </Layout>

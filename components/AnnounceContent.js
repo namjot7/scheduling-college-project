@@ -71,7 +71,7 @@ const AnnounceContent = () => {
     };
 
     return (
-        <div>
+        <Section>
             {role == 1 && <AddBtn className="absolute top-24 right-4" showForm={setShowDialog} text={"Post"} />}
 
             {/* Create new announcement form */}
@@ -119,7 +119,7 @@ const AnnounceContent = () => {
                 ))}
                 {announcements.length == 0 && <div>No announcements for now.</div>}
             </div>
-        </div>
+        </Section>
     )
 }
 

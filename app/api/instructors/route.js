@@ -7,15 +7,22 @@ export const GET = async () => {
     try {
         const db = await initSql();
 
+        // get all the data
         const query = `SELECT * FROM ${tableName}`;
         const data = await db.query(query);
 
+        // get all the columns
         const getColumnsQuery = `SELECT COLUMN_NAME
                     FROM INFORMATION_SCHEMA.COLUMNS
                     WHERE TABLE_NAME = '${tableName}';`;
         const columnsData = await db.query(getColumnsQuery);
 
-        return NextResponse.json({ data, columnsData });
+        // get schedule term
+        const [rows] = await db.execute(`SELECT DISTINCT schedule_term FROM ${tableName}`);
+        const terms = rows.map(row => row.schedule_term);
+        console.log('terms: ', terms);
+
+        return NextResponse.json({ data, columnsData,terms });
     }
     catch (err) {
         return NextResponse.json({ success: false, message: err.message });
