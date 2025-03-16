@@ -16,13 +16,13 @@ import { useUserRole } from '@/components/UserContext'
 
 const AnnounceContent = ({ className, userNameVisibility }) => {
     const { userName, role } = useUserRole();
+    // console.log({ userName, role });
 
     const [announcements, setAnnouncements] = useState([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [showDialog, setShowDialog] = useState(false);
 
-    console.log({ userName, role });
 
     useEffect(() => {
         getAnnouncements()

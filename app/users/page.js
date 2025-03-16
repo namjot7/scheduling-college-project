@@ -49,6 +49,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
+import { DeleteBtn, EditBtn } from "@/components/design/icons";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -206,14 +207,8 @@ const Users = () => {
                                 <td>{user.password}</td>
                                 <td>{user.role}</td>
                                 <td className="flex gap-3">
-                                    <button onClick={() => editUser(user)}
-                                        className="text-blue-600 hover:text-blue-800 font-semibold transition">
-                                        Edit
-                                    </button>
-                                    <button onClick={() => deleteUser(user.id)}
-                                        className="text-red-600 hover:text-red-800 font-semibold transition">
-                                        Delete
-                                    </button>
+                                    <EditBtn onClickFunc={e => editUser(user)} />
+                                    <DeleteBtn onClickFunc={() => deleteUser(user.id)} />
                                 </td>
                             </tr>
                         ))

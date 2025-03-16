@@ -10,7 +10,7 @@ reset password - change to their own preference
 7. instrucotr login
 only show their own schedule
 
-8. instrucot cannot
-on site staff - 
-classrooms
+
+## instrucor should not be able to access 'users' or other pages
+
 

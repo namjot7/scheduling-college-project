@@ -33,10 +33,10 @@ const UploadButton = ({
         });
         if (res.ok) {
             getData();
-            // alert("File Uploaded Successfully!");
+            alert("File Uploaded Successfully!");
         }
-        // setSelectedFile(null);
-        // setSelectedFileName("");
+        setSelectedFile(null);
+        setSelectedFileName("");
     };
     return (
         <div className="mt-10 w-full md:!w-1/3">

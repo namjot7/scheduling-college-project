@@ -139,6 +139,7 @@ const Instructors = () => {
                     <div className='flex justify-end mb-5'>
                         <DeleteBtn
                             text={`Delete`}
+                            className="btn-danger !text-white rounded-md px-3 py-1.5"
                             onClickFunc={() => deleteSchedule(selectedTerm)}
                         />
                     </div>

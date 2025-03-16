@@ -219,7 +219,7 @@ const Schedules = () => {
 
                         {role == 1 && <DeleteBtn
                             text={`Delete`}
-                            className="absolute top-0 right-0 gap-2"
+                            className="absolute top-0 right-0 gap-2 btn-danger !text-white rounded-md px-3 py-1.5"
                             onClickFunc={() => deleteSchedule(selectedTerm)}
                         />}
                     </div>
