@@ -4,21 +4,25 @@ import Section from '@/components/Section'
 import { useUserRole } from '@/components/UserContext';
 import React, { useEffect, useState } from 'react'
 
-const RoomBook = () => {
-    const { username, role } = useUserRole();
-    const [roomRequests, setRoomRequests] = useState([]);
+// status 
+// 0 rejected
+// 1 success
+// 2 pending
 
+const RoomBook = () => {
+    const { userName, email, role } = useUserRole();
+    const [roomRequests, setRoomRequests] = useState([]);
+    const [userRequests, setUserRequests] = useState([]);
     // const [form, setForm] = useState({
-    //     fullName: '' || "namjot",
-    //     email: '' || "namjot@gmail.com",
+    //     fullName: userName,
+    //     email: email,
     //     department: '' || "academics",
     //     purpose: '' || "for event",
     //     date: '' || "2025-11-11",
     //     startTime: '' || "14:00",
-    //     endTime: '' || "14:00",
+    //     endTime: '' || "16:00",
     //     capacity: '' || 25,
     // });
-
     const [form, setForm] = useState({
         fullName: '',
         email: '',
@@ -29,18 +33,38 @@ const RoomBook = () => {
         endTime: '',
         capacity: '',
     });
+    const [remarks, setRemarks] = useState({})
 
     useEffect(() => {
-        getRoomRequests()
     }, [])
 
-    const getRoomRequests = async () => {
-        const res = await fetch("/api/roombook");
-        const data = await res.json()
-        setRoomRequests(data[0])
-        console.log(data[0]);
-    }
+    // Run when userName or email updates
+    useEffect(() => {
+        if (userName && email) {
+            setForm(prevForm => ({
+                ...prevForm,
+                fullName: userName,
+                email: email,
+            }));
+        }
+        if (role !== undefined && email) {
+            getRoomRequests();
+        }
+    }, [userName, email]);
 
+    const getRoomRequests = async () => {
+        let res;
+        console.log("room get", email);
+
+        if (role == 1) {
+            res = await fetch("/api/roombook");
+        } else {
+            res = await fetch("/api/roombook/nonAdmin/?email=" + email);
+        }
+        const data = await res.json()
+        console.log(data[0]);
+        setRoomRequests(data[0])
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(e.target);
@@ -49,27 +73,27 @@ const RoomBook = () => {
             { ...prevData, [name]: value }
         ));
     };
-
+    const handleRemarksChange = (id, value) => {
+        setRemarks(prevRemarks => ({
+            ...prevRemarks,
+            [id]: value  // Store remark based on request ID
+        }));
+    };
     const handleForm = async e => {
         e.preventDefault();
-        console.log(form);
-
         const response = await fetch("/api/roombook", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         });
-
-        // const data = await response.json()
-        // console.log(data);
-        getRoomRequests()
-
+        if (role !== undefined && email) {
+            getRoomRequests();
+        }
         if (response.ok) {
             alert("Room request sent successfully!");
-            // Reset form after successful submission
             setForm({
-                fullName: '',
-                email: '',
+                fullName: userName,
+                email: email,
                 department: '',
                 purpose: '',
                 date: '',
@@ -82,14 +106,15 @@ const RoomBook = () => {
         }
     }
     const updateApprovalStatus = async (id, status) => {
-        console.log(id, status);
+        let selectedRemarks = remarks[id];
+        console.log(id, status, selectedRemarks);
 
         const response = await fetch(`/api/roombook/?id=${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ status }),  // status can be 0, 1, or 2
+            body: JSON.stringify({ status, selectedRemarks }),  // status can be 0, 1, or 2
         });
         const data = await response.json();
         if (data.success) {
@@ -102,18 +127,19 @@ const RoomBook = () => {
 
     return (
         <Layout>
-            <Section title={"Room Book Request"}>
-                <div className="p-6 rounded-lg shadow-lg w-full text-black flex flex-wrap gap-5">
+            <Section title={"Room Booking"}>
+                <div className="p-6 rounded-lg w-full text-black flex flex-wrap gap-5">
 
                     {/* User: Room book form */}
-                    {role != 1 && <form onSubmit={e => handleForm(e)} className='w-full shadow-md lg:w-1/2 px-10 py-5 bg-gray-100'>
+                    {/* role != 1 && */}
+                    {role != 1 && <form onSubmit={e => handleForm(e)} className='w-full shadow-md lg:w-1/2 px-10 py-5'>
                         <h2 className="h2">Book a Room</h2>
 
                         <label>Full Name</label>
-                        <input type='text' name="fullName" value={form.fullName} onChange={e => handleChange(e)} required />
+                        <input type='text' name="fullName" value={form.fullName} onChange={e => handleChange(e)} required disabled />
 
                         <label>Contact Email</label>
-                        <input type='text' name="email" value={form.email} onChange={e => handleChange(e)} required />
+                        <input type='text' name="email" value={form.email} onChange={e => handleChange(e)} required disabled />
 
                         <label>Department</label>
                         <input type='text' name="department" value={form.department} onChange={e => handleChange(e)} required />
@@ -123,14 +149,6 @@ const RoomBook = () => {
 
                         <label>Purpose</label>
                         <textarea className='input' placeholder="Enter purpose of booking" rows={3} name="purpose" value={form.purpose} onChange={e => handleChange(e)} required />
-
-
-                        {/* <label className="block mb-2 font-medium">Select Room</label>
-                        <select className='input' value={form.room} onChange={e=>handleChange(e)} required/>
-                            <option>Room 101</option>
-                            <option>Room 102</option>
-                            <option>Room 103</option>
-                        </select> */}
 
                         <div className="flex gap-4">
                             <div>
@@ -145,32 +163,28 @@ const RoomBook = () => {
                                 <label>End Time</label>
                                 <input type="time" name='endTime' value={form.endTime} onChange={e => handleChange(e)} required />
                             </div>
-                            {/* <div>
-                                <label>End startTime</label>
-                                <input type="starttime" value={form.starttime} onChange={e=>handleChange(e)} required/>value)} />
-                            </div> */}
                         </div>
-
                         <button type="submit" className="btn-primary w-full mt-5">
                             Submit Request
                         </button>
                     </form>}
 
                     {/* Admin: Room book requests */}
-                    {role == 1 && <div className='w-full'>
+                    {/* role == 1 && */}
+                    <div className='w-full'>
                         <h2 className="h2">Requests</h2>
                         <div className="flex gap-4  flex-col">
                             {roomRequests?.length > 0 && roomRequests.map(item => (
                                 <div key={item.id} className='bg-white shadow-lg mb-4 p-6 rounded-lg '>
-                                    <div className="flex-between ">
+                                    <div className="flex justify-between ">
                                         <ul>
-                                            <li className="h4">User Details</li>
+                                            <li className="text-lg font-semibold">User Details</li>
                                             <li>{item.fullName}</li>
                                             <li>{item.email}</li>
                                             <li>{item.department}</li>
                                         </ul>
                                         <ul>
-                                            <li className="h4">Booking Details</li>
+                                            <li className="text-lg font-semibold">Booking Details</li>
                                             <li>{item.purpose}</li>
                                             <li>{item.room}</li>
                                             <li>Capacity: {item.capacity}</li>
@@ -178,29 +192,72 @@ const RoomBook = () => {
                                             <li>{item.startTime.slice(0, 5)} to {item.endTime.slice(0, 5)}</li>
                                         </ul>
 
-                                        <div className={`flex-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'btn-success' : 'btn-danger'}`}>
+                                        <div className={`flex-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'text-green-500' : 'text-red-500'}`}>
                                             {item.status === 1
                                                 ? "Done"
-                                                : item.status === 2
-                                                    ? "Pending"
-                                                    : "Rejected"}
+                                                : item.status === 2 ? "Pending" : "Rejected"
+                                            }
                                         </div>
-                                        {item.status == 2 && <div className="flex gap-2">
+                                        {role == 1 && item.status == 2 && <div className="flex-center gap-2">
                                             <button className="btn-success" onClick={e => updateApprovalStatus(item.id, 1)}>Approve</button>
                                             <button className="btn-danger" onClick={e => updateApprovalStatus(item.id, 0)}>Reject</button>
                                         </div>}
                                     </div>
-                                    <input className='w-1/2 !py-1 mt-5' type="text" name="" placeholder='Remarks' id="" />
+                                    {<textarea rows={2} className='w-1/2 !py-1 mt-2 !rounded-sm' type="text" placeholder='Remarks'
+                                        value={remarks[item.id] || item.remarks || ""}
+                                        onChange={e => handleRemarksChange(item.id, e.target.value)}
+                                        disabled={role != 1 || item.status != 2}
+                                        required
+                                    />}
                                 </div>
-                            ))
-                            }
+                            ))}
                         </div >
-                    </div >}
+                    </div >
 
                     {/* Request status */}
-                    {/* {role != 1 && <div className="min-h-40 bg-gray-400">
-                        dfd
-                    </div>} */}
+                    {/* role != 1 &&  */}
+                    {/* {<div className='w-full'>
+                        <h2 className="h2">Your Requests</h2>
+                        <div className="flex gap-4  flex-col">
+                            {roomRequests?.length > 0 && roomRequests.map(item => (
+                                <div key={item.id} className='bg-white shadow-lg mb-4 p-6 rounded-lg '>
+                                    <div className="flex justify-between ">
+                                        <ul>
+                                            <li className="text-lg font-semibold">User Details</li>
+                                            <li>{item.fullName}</li>
+                                            <li>{item.email}</li>
+                                            <li>{item.department}</li>
+                                        </ul>
+                                        <ul>
+                                            <li className="text-lg font-semibold">Booking Details</li>
+                                            <li>{item.purpose}</li>
+                                            <li>{item.room}</li>
+                                            <li>Capacity: {item.capacity}</li>
+                                            <li>{item.date.split('T')[0]}</li>
+                                            <li>{item.startTime.slice(0, 5)} to {item.endTime.slice(0, 5)}</li>
+                                        </ul>
+
+                                        <div className={`flex-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'text-green-500' : 'text-red-500'}`}>
+                                            {item.status === 1
+                                                ? "Done"
+                                                : item.status === 2 ? "Pending" : "Rejected"
+                                            }
+                                        </div>
+                                        {item.status == 2 && <div className="flex-center gap-2">
+                                            <button className="btn-success" onClick={e => updateApprovalStatus(item.id, 1)}>Approve</button>
+                                            <button className="btn-danger" onClick={e => updateApprovalStatus(item.id, 0)}>Reject</button>
+                                        </div>}
+                                    </div>
+                                    <textarea rows={2} className='w-1/2 !py-1 mt-2 !rounded-sm' type="text" name="" placeholder='Remarks'
+                                        value={remarks[item.id] || item.remarks || ""}
+                                        onChange={e => handleRemarksChange(item.id, e.target.value)}
+                                        disabled={item.status != 2}
+                                        required
+                                    />
+                                </div>
+                            ))}
+                        </div >
+                    </div >} */}
                 </div >
             </Section >
         </Layout >

@@ -1,10 +1,11 @@
 import initSql, { db } from "@/lib/db"; // Adjust to your DB connection
 import { NextResponse } from "next/server";
 
-const tableName = 'master_schedule';
+const tableName = 'roombook';
 
 export async function GET(req) {
     const db = await initSql()
+    console.log('get reuqest for nonadmin roombook');
 
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email");
@@ -16,15 +17,15 @@ export async function GET(req) {
 
     try {
         // get data
-        const data = await db.query(`SELECT * FROM ${tableName} WHERE instructor_email_id = ?`, [email]);
+        const data = await db.query(`SELECT * FROM ${tableName} WHERE email = ?`, [email]);
 
         // get all the columns
-        const getColumnsQuery = `SELECT COLUMN_NAME
-            FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = '${tableName}';`;
-        const columns = await db.query(getColumnsQuery);
+        // const getColumnsQuery = `SELECT COLUMN_NAME
+        //     FROM INFORMATION_SCHEMA.COLUMNS
+        //     WHERE TABLE_NAME = '${tableName}';`;
+        // const columns = await db.query(getColumnsQuery);
 
-        return NextResponse.json({ data, columns });
+        return NextResponse.json(data);
     }
     catch (error) {
         console.error(error);

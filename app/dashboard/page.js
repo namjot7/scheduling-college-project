@@ -38,21 +38,11 @@ const Dashboard = () => {
         const columnsData = result.columns[0];
         let modCols = columnsData.map(item => item.COLUMN_NAME);
 
-        console.log(result);
-        console.log({ scheduleData, columnsData });
+        // console.log(result);
+        // console.log({ scheduleData, columnsData });
         setSchedule(scheduleData);
         setColumns(modCols);
-
-
     }
-    columns.map((col, index) => {
-        console.log(col);
-
-    })
-    schedule.map(item => {
-        console.log(item);
-
-    })
     return (
         <Layout>
             <Section title={'Dashboard'}>
