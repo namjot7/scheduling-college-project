@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 const mockUsers = [
     { email: 'admin@gmail.com', password: '0000', name: 'admin', id: 1, role: 1 },
     { email: 'instructor@gmail.com', password: '0000', name: 'instructor', id: 2, role: 2 },
-    { email: 'user@gmail.com', password: '0000', name: 'user', id: 3, role: 3 },
+    { email: 'staff@gmail.com', password: '0000', name: 'staff', id: 3, role: 3 },
 ]
 export async function POST(request) {
     try {

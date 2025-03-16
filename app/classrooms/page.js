@@ -4,10 +4,14 @@ import Layout from '@/components/design/Layout'
 import ClassForm from '@/components/forms/ClassForm'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
+import { useUserRole } from '@/components/UserContext'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
 
-const ClassRooms = () => {
+const Classrooms = () => {
+    const { userName, role } = useUserRole();
+    // console.log(userName, role);
+
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
     const [columns, setColumns] = useState([]);
@@ -90,12 +94,8 @@ const ClassRooms = () => {
                         getData={getClasses}
                     />
 
-                    {/* Heading and Schedule dropdown */}
-                    <div className="flex-between mb-2">
-                        <h2 className="h2">Winter 2025</h2>
-                    </div>
                     {/* Search and Download Excel & Add Entry buttons */}
-                    <div className="flex-between my-5">
+                    <div className="flex-between mb-2">
                         <div className="relative">
                             <img className='absolute top-2 left-2' src="./svg/search.svg" alt="" />
                             <input
@@ -107,29 +107,30 @@ const ClassRooms = () => {
                             />
                         </div>
                         <div className='flex gap-3'>
-                            <button onClick={() => setShowForm(!showForm)} className='btn-primary flex-center'>
+                            {role == 1 && <button onClick={() => setShowForm(!showForm)} className='btn-primary flex-center'>
                                 <img src="./svg/plus.svg" alt="" />
                                 Add Entry
-                            </button>
+                            </button>}
                             <button className="btn-primary flex" onClick={() => downloadExcel()}>
                                 <img src="./svg/download.svg" alt="download icon" />
                                 Excel
                             </button>
                         </div>
                     </div>
-                    <div className='flex justify-end mb-5'>
+
+                    {role == 1 && <div className='flex justify-end mb-2'>
                         <DeleteBtn
                             text={`Delete`}
                             onClickFunc={() => deleteSchedule()}
                         />
-                    </div>
+                    </div>}
 
                     {/* Table */}
                     <div className="overflow-scroll max-w-[70vw] max-h-[80vh]">
                         <table className="table-basic">
                             <thead>
                                 <tr>
-                                    <th>Actions</th>
+                                    {role == 1 && <th>Actions</th>}
                                     {columns.map((col, index) => (
                                         <th key={index}>{col}</th>
                                     ))}
@@ -138,10 +139,10 @@ const ClassRooms = () => {
                             <tbody>
                                 {displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
-                                        <td className="flex gap-3">
+                                        {role == 1 && <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
                                             <DeleteBtn onClickFunc={() => deleteEntry(item.id)} />
-                                        </td>
+                                        </td>}
                                         {columns.map((col, index) =>
                                             <td key={index}>{item[col]}</td>
                                         )}
@@ -150,11 +151,11 @@ const ClassRooms = () => {
                             </tbody>
                         </table>
                     </div>
-                    <UploadButton apiEndPoint={"classrooms"} getData={getClasses} />
+                    {role == 1 && <UploadButton apiEndPoint={"classrooms"} getData={getClasses} />}
                 </div>
             </Section>
         </Layout>
     )
 }
 
-export default ClassRooms
+export default Classrooms

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box
@@ -93,12 +93,18 @@ input[type='file'] {
   margin-top: 20px;
 }
 
+.table-basic thead {
+  @apply bg-n-5/10;
+}
+
 .table-basic th,
 .table-basic td {
   white-space: nowrap;
-  border: 1px solid #939393;
+  border: 1px solid #d7d7d7;
   width: auto;
   padding: 5px;
+  padding-left: 15px;
+
 }
 
 .table-basic th {
@@ -106,6 +112,7 @@ input[type='file'] {
   font-weight: bold;
   text-align: left;
 }
+
 
 .form-basic {
   @apply my-5 w-full max-w-[600px];

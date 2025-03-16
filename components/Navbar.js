@@ -54,7 +54,7 @@ const Navbar = () => {
                         <img className="invert" src="./navbar/instructor.svg" width={20} height={20} alt="" />
                         <span className="ml-1">Instructors</span>
                     </Link>}
-                    {role == 1 && <Link href={"/classrooms"} className={pathName == "/classrooms" ? activeLink : inactiveLink} >
+                    {role != 2 && <Link href={"/classrooms"} className={pathName == "/classrooms" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/classroom.svg" width={21} height={21} alt="" />
                         <span>Classrooms</span>
                     </Link>}
@@ -65,7 +65,7 @@ const Navbar = () => {
                 </div>
 
                 <div>
-                    {role == 1 && <Link href={"/staff"} className={pathName == "/staff" ? activeLink : inactiveLink} >
+                    {role != 2 && <Link href={"/staff"} className={pathName == "/staff" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/group.svg" width={25} height={25} alt="" />
                         <span>Staff</span>
                     </Link>}
@@ -84,10 +84,10 @@ const Navbar = () => {
                 </div>
 
                 <div className="w-full border-t-2 border-gray-500 absolute left-0 bottom-0">
-                    {/* <Link href={"/profile"} className={pathName == "/profile" ? activeLink : inactiveLink} >
+                    <Link href={"/profile"} className={pathName == "/profile" ? activeLink : inactiveLink} >
                         <img className="invert" src="./navbar/avatar.svg" width={25} height={25} alt="" />
                         <span>My Profile</span>
-                    </Link> */}
+                    </Link>
                     <button className={inactiveLink} onClick={() => signOut()}>
                         <img className="invert" src="./navbar/signout.svg" width={25} height={25} alt="" />
                         Sign out

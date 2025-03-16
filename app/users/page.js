@@ -46,167 +46,181 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
 
 const Users = () => {
-    const [users, setUsers] = useState([
-        { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Observer" },
-        { id: 3, name: "Alice Brown", email: "alice@example.com", role: "Instructor" },
-        { id: 4, name: "Bob Johnson", email: "bob@example.com", role: "Instructor" },
-        { id: 5, name: "Charlie White", email: "charlie@example.com", role: "Observer" }
-    ]);
+    const [users, setUsers] = useState([]);
+    const [formData, setFormData] = useState({ username: "", email: "", password: "", role: "" });
+    const [selectedUserId, setSelectedUserId] = useState(0);
+    const [dynamicText, setDynamicText] = useState("Add");
 
-    const [editMode, setEditMode] = useState(null);
-    const [formData, setFormData] = useState({ name: "", email: "", role: "" });
-    const [message, setMessage] = useState("");
     const [search, setSearch] = useState("");
     const [sortField, setSortField] = useState("name");
     const [sortOrder, setSortOrder] = useState("asc");
 
-    const filteredUsers = users
-        .filter(user =>
-            user.name.toLowerCase().includes(search.toLowerCase()) ||
-            user.email.toLowerCase().includes(search.toLowerCase())
-        )
-        .sort((a, b) => {
-            const fieldA = a[sortField].toLowerCase();
-            const fieldB = b[sortField].toLowerCase();
-            return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
-        });
+    useEffect(() => {
+        getUsers()
+    }, [])
+
+    const getUsers = async () => {
+        const response = await fetch('/api/users');
+        const result = await response.json();
+        const data = result[0]
+        // console.log(data);
+        setUsers(data)
+    }
+
+    // const filteredUsers = users
+    //     .filter(user =>
+    //         user.name.toLowerCase().includes(search.toLowerCase()) ||
+    //         user.email.toLowerCase().includes(search.toLowerCase())
+    //     )
+    //     .sort((a, b) => {
+    //         const fieldA = a[sortField].toLowerCase();
+    //         const fieldB = b[sortField].toLowerCase();
+    //         return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
+    //     });
 
     const handleSort = (field) => {
         setSortOrder(sortOrder === "asc" ? "desc" : "asc");
         setSortField(field);
     };
-
-    const handleEdit = (user) => {
-        setEditMode(user.id);
-        setFormData({ name: user.name, email: user.email, role: user.role });
-    };
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (id) => {
-        setUsers(users.map(user => user.id === id ? { ...user, ...formData } : user));
-        setEditMode(null);
-        setMessage("✅ User updated successfully.");
-        setTimeout(() => setMessage(""), 3000);
+    const editUser = (user) => {
+        // console.log(user);
+        const userData = {
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            role: user.role
+        }
+        setFormData(userData);
+        setSelectedUserId(user.id);
+        setDynamicText("Update")
     };
 
-    const handleDelete = (id) => {
-        if (!confirm("Are you sure you want to delete this user?")) return;
-        setUsers(users.filter(user => user.id !== id));
-        setMessage("❌ User deleted successfully.");
-        setTimeout(() => setMessage(""), 3000);
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent page refresh
+        saveUser()
     };
+    const saveUser = async () => {
+        const url = selectedUserId ? `/api/users/?id=${selectedUserId}` : "/api/users"
+        const method = selectedUserId ? "PUT" : "POST";
+        // console.log({ formData, selectedUserId });
+        console.log(method, url);
 
-    const handleAddUser = () => {
-        if (!formData.name.trim()) {
-            setMessage("❌ Name cannot be empty.");
-            setTimeout(() => setMessage(""), 3000);
-            return;
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (res.ok && method == 'POST') {
+            alert("Successfully added.")
         }
-        if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-            setMessage("❌ Invalid email format.");
-            setTimeout(() => setMessage(""), 3000);
-            return;
-        }
-        if (!formData.role) {
-            setMessage("❌ Please select a role.");
-            setTimeout(() => setMessage(""), 3000);
-            return;
+        else if (res.ok && method == 'PUT') {
+            alert("Successfully Updated.")
         }
 
-        const newUser = {
-            id: Date.now(), // Ensures uniqueness
-            name: formData.name,
-            email: formData.email,
-            role: formData.role,
-        };
-        setUsers([...users, newUser]);
-        setFormData({ name: "", email: "", role: "" });
-        setMessage("✅ New user added successfully.");
-        setTimeout(() => setMessage(""), 3000);
+        getUsers(); // get the updated changes
+        resetForm();
+    }
+    const deleteUser = async (id) => {
+        if (!confirm("Are you sure you want to delete this user?")) {
+            return;
+        }
+        const res = await fetch(`/api/users?id=${id}`, {
+            method: 'DELETE'
+        });
+        if (res.ok) {
+            alert("Deleted successfully");
+            getUsers();
+        } else {
+            alert("Failed to delete");
+        }
     };
+    const resetForm = () => {
+        setFormData({ username: "", email: "", password: "", role: "" });
+        setDynamicText("Add");
+    }
 
     return (
         <Layout>
-            <Section title="User Management">
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                    {message && <div className="mb-4 p-3 text-white font-semibold rounded-lg bg-green-500 dark:bg-green-700">{message}</div>}
-
-                    <div className="mb-4 flex space-x-4">
-                        <input
-                            type="text"
-                            placeholder="Search Users..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="border p-2 rounded w-1/4"
+            <Section title="All Users">
+                {/* Search button and User form */}
+                <div>
+                    <div className="mb-5 w-1/3">
+                        <input type="text" placeholder="Search Users..."
+                            value={search} onChange={(e) => setSearch(e.target.value)}
                         />
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Name"
-                            className="border p-2 rounded w-1/4"
+                    </div>
+                    <h3 className="h3">{dynamicText} User</h3>
+                    <form onSubmit={e => handleSubmit(e)} className="flex gap-3 h-[36px] mt-3 mb-5">
+                        <input type="text" name="username" className=" w-full"
+                            value={formData.username} onChange={handleChange} placeholder="Name"
                         />
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Email"
-                            className="border p-2 rounded w-1/4"
+                        <input type="email" name="email" className=" w-full"
+                            value={formData.email} onChange={handleChange} placeholder="Email"
                         />
-                        <select
-                            name="role"
-                            value={formData.role}
-                            onChange={handleChange}
-                            className="border p-2 rounded w-1/4"
+                        <input type="text" name="password" className=" w-full"
+                            value={formData.password} onChange={handleChange} placeholder="Password"
+                        />
+                        <select name="role" className="input  w-1/2"
+                            value={formData.role} onChange={handleChange}
                         >
                             <option value="">Select Role</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Observer">Observer</option>
-                            <option value="Instructor">Instructor</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Instructor</option>
+                            <option value="3">Observer</option>
                         </select>
-                        <button
-                            onClick={handleAddUser}
-                            className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
-                        >
-                            Add User
+                        <button type="submit" className="btn-primary w-1/2">
+                            {dynamicText}
                         </button>
-                    </div>
-
-                    <table className="w-full text-sm text-gray-700 dark:text-gray-300 border-collapse">
-                        <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300">
-                            <tr>
-                                <th className="px-6 py-3 border cursor-pointer" onClick={() => handleSort("name")}>Name ⬍</th>
-                                <th className="px-6 py-3 border cursor-pointer" onClick={() => handleSort("email")}>Email ⬍</th>
-                                <th className="px-6 py-3 border cursor-pointer" onClick={() => handleSort("role")}>Role ⬍</th>
-                                <th className="px-6 py-3 border text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredUsers.map(user => (
-                                <tr key={user.id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                                    <td className="px-6 py-4 border">{user.name}</td>
-                                    <td className="px-6 py-4 border">{user.email}</td>
-                                    <td className="px-6 py-4 border">{user.role}</td>
-                                    <td className="px-6 py-4 flex justify-center space-x-4 border">
-                                        <button onClick={() => handleEdit(user)} className="text-blue-600 hover:text-blue-800 font-semibold transition">Edit</button>
-                                        <button onClick={() => handleDelete(user.id)} className="text-red-600 hover:text-red-800 font-semibold transition">Delete</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    </form>
                 </div>
+
+                {/* Table */}
+                <table className="table-basic ">
+                    <thead className="">
+                        <tr>
+                            <th className="cursor-pointer" onClick={() => handleSort("name")}>Name ⬍</th>
+                            <th className="cursor-pointer">Email</th>
+                            <th className="cursor-pointer">Passwords</th>
+                            <th className="cursor-pointer">Role</th>
+                            <th className="px-6 py-3 border text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {/* {filteredUsers.map(user => ( */}
+                        {users?.length > 0 && users.map(user => (
+                            <tr key={user.id}>
+                                <td>{user.username}</td>
+                                <td>{user.email}</td>
+                                <td>{user.password}</td>
+                                <td>{user.role}</td>
+                                <td className="flex gap-3">
+                                    <button onClick={() => editUser(user)}
+                                        className="text-blue-600 hover:text-blue-800 font-semibold transition">
+                                        Edit
+                                    </button>
+                                    <button onClick={() => deleteUser(user.id)}
+                                        className="text-red-600 hover:text-red-800 font-semibold transition">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                        }
+                        {/* ))} */}
+                    </tbody>
+                </table>
             </Section>
         </Layout>
     );

@@ -1,5 +1,6 @@
-export const programs = {
+// Course info,
 
+export const programs = {
     "Undergraduate Diplomas": [
         {
             "name": "Business",
