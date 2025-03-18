@@ -162,16 +162,16 @@ const Users = () => {
                     <h3 className="h3">{dynamicText} User</h3>
                     <form onSubmit={e => handleSubmit(e)} className="flex gap-3 h-[36px] mt-3 mb-5">
                         <input type="text" name="username" className=" w-full"
-                            value={formData.username} onChange={handleChange} placeholder="Name"
+                            required value={formData.username} onChange={handleChange} placeholder="Name"
                         />
                         <input type="email" name="email" className=" w-full"
-                            value={formData.email} onChange={handleChange} placeholder="Email"
+                            required value={formData.email} onChange={handleChange} placeholder="Email"
                         />
                         <input type="text" name="password" className=" w-full"
-                            value={formData.password} onChange={handleChange} placeholder="Password"
+                            required value={formData.password} onChange={handleChange} placeholder="Password"
                         />
                         <select name="role" className="input  w-1/2"
-                            value={formData.role} onChange={handleChange}
+                            required value={formData.role} onChange={handleChange}
                         >
                             <option value="">Select Role</option>
                             <option value="1">Admin</option>
@@ -189,7 +189,7 @@ const Users = () => {
                     <table className="table-basic ">
                         <thead>
                             <tr>
-                                <th onClick={() => handleSort("name")}>Name ⬍</th>
+                                <th onClick={() => handleSort("name")}>Name</th>
                                 <th>Email</th>
                                 <th>Passwords</th>
                                 <th>Role</th>

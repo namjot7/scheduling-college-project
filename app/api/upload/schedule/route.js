@@ -76,9 +76,13 @@ export const POST = async (req) => {
         // Insert Excel data into database
         for (const row of jsonData) {
             // console.log(row);
+            // const values = columns.map(col => {
+            //     return row[col] !== undefined && row[col] !== null ? `'${row[col].toString().replace(/'/g, "'")}'` : 'NULL';
+            // }).join(", ");
             const values = columns.map(col => {
                 return row[col] !== undefined && row[col] !== null ? `'${row[col].toString().replace(/'/g, "'")}'` : 'NULL';
             }).join(", ");
+
             // replace single quote with single quote: to prevent SQL Injection
             // console.log({ values });
             const query = `INSERT INTO ${tableName} 
@@ -90,6 +94,7 @@ export const POST = async (req) => {
             // console.log(data);
         }
         return NextResponse.json({ success: true, columns });
+        return NextResponse.json({ success: true });
     }
     catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

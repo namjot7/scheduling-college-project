@@ -94,13 +94,13 @@ input[type='file'] {
 }
 
 .table-basic thead {
-  @apply bg-n-5/10;
+  @apply bg-slate-200;
 }
 
 .table-basic th,
 .table-basic td {
   white-space: nowrap;
-  border: 1px solid #d7d7d7;
+  @apply border border-slate-300;
   width: auto;
   padding: 5px;
   padding-left: 15px;

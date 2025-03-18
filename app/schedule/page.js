@@ -22,7 +22,7 @@ const Schedules = () => {
     const { userName, role } = useUserRole()
     // console.log(userName, role);
 
-    const [selectedTerm, setSelectedTerm] = useState("winter_2025");
+    const [selectedTerm, setSelectedTerm] = useState("fall_2024");
     const [terms, setTerms] = useState([])
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search

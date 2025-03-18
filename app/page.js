@@ -61,11 +61,13 @@ const Login = () => {
   const handlePasswordRequest = async (e) => {
     e.preventDefault();
 
-    await fetch("/api/users/changePassword", {
+    const res = await fetch("/api/users/changePassword", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ resetEmail }),
     });
+    // const result = await res.json();
+    // console.log(result, res);
 
     if (res.ok) {
       setShowForm(false)
