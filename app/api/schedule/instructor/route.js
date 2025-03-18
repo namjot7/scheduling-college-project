@@ -21,7 +21,8 @@ export async function GET(req) {
         // get all the columns
         const getColumnsQuery = `SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = '${tableName}';`;
+            WHERE TABLE_NAME = '${tableName}'
+            ORDER BY ORDINAL_POSITION`;
         const columns = await db.query(getColumnsQuery);
 
         return NextResponse.json({ data, columns });

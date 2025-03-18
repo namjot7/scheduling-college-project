@@ -51,7 +51,7 @@ export const POST = async (req) => {
 
         // Prepare data for insertion
         let columns = Object.keys(jsonData[0]);
-        console.log(columns);
+        // console.log(columns);
 
         let modifiedcolumns = columns.map(col => {
             return `${col.replace(/[\s.&]/g, '_').toLowerCase()}`; // g means replacement occues globally => \s: space,

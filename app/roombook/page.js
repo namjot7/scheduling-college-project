@@ -211,6 +211,7 @@ const RoomBook = () => {
                                     />}
                                 </div>
                             ))}
+                            {roomRequests?.length == 0 && <div className="mt-5 text-center text-lg">No requests to display</div>}
                         </div >
                     </div >
 

@@ -1,5 +1,5 @@
 'use client'
-import { DeleteBtn, EditBtn } from '@/components/design/icons'
+import { DeleteBtn, EditBtn } from '@/components/design/Icons'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
@@ -160,6 +160,7 @@ const Schedules = () => {
                             </select>
                         </div>
                     </div>
+
                     {/* Search and Download Excel & Add Entry buttons */}
                     <div className="flex-between my-5">
                         <div className="relative">
@@ -244,7 +245,7 @@ const Schedules = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData?.length > 0 && displayData.map((item, idx) => (
+                                {displayData?.length > 0 && displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
                                         {role == 1 && <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
@@ -257,6 +258,7 @@ const Schedules = () => {
                                 ))}
                             </tbody>
                         </table>
+                        {displayData?.length == 0 && <div className="mt-5 text-center text-lg">No data to display</div>}
                     </div>
 
                     {role == 1 && <UploadButton apiEndPoint={"schedule"} getData={getSchedule} />}

@@ -8,13 +8,13 @@ export const GET = async () => {
         const db = await initSql();
 
         // get all the data
-        const query = `SELECT * FROM ${tableName}`;
-        const data = await db.query(query);
+        const data = await db.query(`SELECT * FROM ${tableName}`);
 
         // get all the columns
         const getColumnsQuery = `SELECT COLUMN_NAME
                     FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE TABLE_NAME = '${tableName}';`;
+                    WHERE TABLE_NAME = '${tableName}'
+                    ORDER BY ORDINAL_POSITION`;
         const columnsData = await db.query(getColumnsQuery);
 
         // get schedule term
@@ -22,7 +22,7 @@ export const GET = async () => {
         const terms = rows.map(row => row.schedule_term);
         console.log('terms: ', terms);
 
-        return NextResponse.json({ data, columnsData,terms });
+        return NextResponse.json({ data, columnsData, terms });
     }
     catch (err) {
         return NextResponse.json({ success: false, message: err.message });

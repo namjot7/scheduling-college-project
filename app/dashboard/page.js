@@ -13,9 +13,16 @@ const Dashboard = () => {
     const [columns, setColumns] = useState([]);
 
     const [count, setCount] = useState({
-        totalInstructors: 0,
-        totalClasses: 0,
+        Classes: 0,
+        Instructors: 0,
+        ResetRequests: 0,
     })
+    const iconMap = {
+        Classes: "./navbar/classroom.svg",
+        Instructors: "./navbar/instructor.svg",
+        ResetRequests: "./svg/lock.svg",
+    };
+
     useEffect(() => {
         console.log(role);
         if (role == 1) getCount()
@@ -31,7 +38,6 @@ const Dashboard = () => {
     }
     // For instructors only
     const getSchedule = async () => {
-        console.log('get shcudle clalled');
         const res = await fetch('/api/schedule/instructor/?email=' + email)
         const result = await res.json();
         const scheduleData = result.data[0];
@@ -49,22 +55,17 @@ const Dashboard = () => {
                 <div className='flex justify-center flex-col '>
                     <div className='font-semibold text-lg my-5'>Date: {date.toDateString()}</div>
 
-                    {/* No. of instructors and classes */}
+                    {/* Overview cards */}
                     {role == 1 && <div className='flex gap-10 mb-5'>
-                        <div className="flex-between w-56 rounded-md bg-gray-100 shadow-md px-5 py-4 hover:bg-gray-200 transition">
-                            <div>
-                                <h3 className='text-xl'>Instructors</h3>
-                                <span className='text-2xl font-semibold'>{count.totalInstructors}</span>
+                        {Object.entries(count).map(([key, value]) => (
+                            <div key={key} className="flex-between w-56 rounded-md bg-gray-100 shadow-md px-5 py-4 hover:bg-gray-200 transition cursor-pointer">
+                                <div>
+                                    <h3 className='text-xl'>{key}</h3>
+                                    <span className='text-2xl font-semibold'>{value}</span>
+                                </div>
+                                <img src={iconMap[key] || "/icons/default.svg"} width={35} alt={key} />
                             </div>
-                            <img src="./navbar/instructor.svg" width={35} alt="" />
-                        </div>
-                        <div className="flex-between w-56 rounded-md bg-gray-100 shadow-md px-5 py-4 hover:bg-gray-200 transition">
-                            <div>
-                                <h3 className='text-xl'>Classes</h3>
-                                <span className='text-2xl font-semibold'>{count.totalClasses}</span>
-                            </div>
-                            <img src="./navbar/classroom.svg" width={35} alt="" />
-                        </div>
+                        ))}
                     </div>}
 
                     {/* Instructor Schedule */}
@@ -80,7 +81,7 @@ const Dashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {schedule.map((item, idx) => (
+                                    {schedule?.length > 0 && schedule.map((item, idx) => (
                                         <tr key={idx}>
                                             {columns.map((col, index) =>
                                                 <td key={index}>{item[col]}</td>
@@ -89,6 +90,7 @@ const Dashboard = () => {
                                     ))}
                                 </tbody>
                             </table>
+                            {schedule?.length == 0 && <div className="mt-5 text-center text-lg">No data to display</div>}
                         </div>
                     }
                     <AnnounceContent className='!p-0' hideUsername={true} />

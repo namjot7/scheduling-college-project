@@ -1,5 +1,5 @@
 'use client'
-import { DeleteBtn, EditBtn } from '@/components/design/icons'
+import { DeleteBtn, EditBtn } from '@/components/design/Icons'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
@@ -33,7 +33,7 @@ const Instructors = () => {
     // Search for all fields
     useEffect(() => {
         let lowerSearchTerm = searchTerm.toLowerCase();
-        let updatedSchedule = scheduleInfo.filter(item =>
+        let updatedSchedule = filteredByTermSchedule.filter(item =>
             Object.values(item).some(value =>
                 value && value.toString().toLowerCase().includes(lowerSearchTerm)
             )
@@ -164,7 +164,7 @@ const Instructors = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData.map((item, idx) => (
+                                {displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
                                         <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
@@ -177,6 +177,7 @@ const Instructors = () => {
                                 ))}
                             </tbody>
                         </table>
+                        {displayData?.length == 0 && <div className="mt-5 text-center text-lg">No data to display</div>}
                     </div>
 
                     <UploadButton apiEndPoint={"instructors"} getData={getInstructors} />

@@ -31,12 +31,12 @@ const UploadButton = ({
             method: "POST",
             body: formData,
         });
-        // if (res.ok) {
-        //     getData();
-        //     alert("File Uploaded Successfully!");
-        // }
-        // setSelectedFile(null);
-        // setSelectedFileName("");
+        if (res.ok) {
+            getData();
+            alert("File Uploaded Successfully!");
+        }
+        setSelectedFile(null);
+        setSelectedFileName("");
     };
     return (
         <div className="mt-10 w-full md:!w-1/3">

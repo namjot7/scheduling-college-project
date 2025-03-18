@@ -1,5 +1,5 @@
 'use client'
-import { AddBtn, DeleteBtn } from '@/components/design/icons'
+import { AddBtn, DeleteBtn } from '@/components/design/Icons'
 import Section from '@/components/Section'
 import React, { useContext, useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -57,6 +57,10 @@ const AnnounceContent = ({ className, hideUsername }) => {
     };
 
     const deleteAnnouncement = async (id) => {
+        let confirmDelete = confirm("Are you sure you want to delete this announcement? This action cannot be reversed.")
+        if (!confirmDelete) {
+            return;
+        }
         const res = await fetch(`/api/announcements`, {
             method: 'DELETE',
             headers: {
@@ -97,7 +101,7 @@ const AnnounceContent = ({ className, hideUsername }) => {
                     </div>
                     <DialogFooter>
                         <Button className="w-1/3 mx-auto" type="submit" onClick={e => saveAnnouncement()}>
-                            Save changes
+                            Post
                         </Button>
                     </DialogFooter>
                 </DialogContent>

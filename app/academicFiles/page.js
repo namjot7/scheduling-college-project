@@ -1,6 +1,6 @@
 'use client'
 import FileTypeIcon from '@/components/design/FileTypeIcon'
-import { DeleteBtn } from '@/components/design/icons'
+import { DeleteBtn } from '@/components/design/Icons'
 import Layout from '@/components/design/Layout'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
@@ -52,7 +52,7 @@ const AcademicFiles = () => {
                                 {file?.name}
                             </div>
                             <div className='flex gap-2'>
-                                {role == 1 && <DeleteBtn onClickFunc={() => deleteFile(file.name)} />}
+                                {role == 1 && <DeleteBtn onClickFunc={() => deleteFile(file.name)} bg={true} />}
                                 <a href={`./uploads/academic_files/${file.name}`} className='btn-primary'>
                                     <img src="./svg/download.svg" alt="download icon" />
                                 </a>

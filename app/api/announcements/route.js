@@ -27,7 +27,7 @@ export const POST = async (req) => {
     try {
         const db = await initSql()
         const { title, description } = await req.json()
-        console.log({ title, description });
+        // console.log({ title, description });
 
         // Ensure the table exists
         const createTableQuery = `

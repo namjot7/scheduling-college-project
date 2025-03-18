@@ -80,8 +80,11 @@ const Login = () => {
     <div className="bg-gray-100 min-h-screen flex">
       {/* image */}
       <div className="h-screen relative w-1/2">
-        <img className='object-cover w-full h-full' src="homebg.jpeg" alt="" />
-        <h2 className='absolute top-1/2 left-1/2 bg-white px-5 py-3 !text-3xl h1 -translate-x-1/2 -translate-y-1/2 rounded-md'>NCT Scheduling Hub</h2>
+        <img className='object-cover w-full h-full blur-sm' src="homebg.jpeg" alt="" />
+        <div className="w-full absolute top-0 left-0 h-full bg-n-6/20" />
+        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center  text-white px-5 py-3 text-5xl font-semibold  rounded-md'>
+          NCT Scheduling Hub
+        </div>
       </div>
 
       {/* Login form */}

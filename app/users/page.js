@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
-import { DeleteBtn, EditBtn } from "@/components/design/icons";
+import { DeleteBtn, EditBtn } from "@/components/design/Icons";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -56,7 +56,7 @@ const Users = () => {
     const getRequests = async () => {
         const res = await fetch("/api/users/resetPassword")
         const requestsData = await res.json()
-        console.log(requestsData);
+        // console.log(requestsData);
         setRequests(requestsData)
     }
     // const filteredUsers = users.filter(user =>
@@ -134,24 +134,21 @@ const Users = () => {
         setFormData({ username: "", email: "", password: "", role: "" });
         setDynamicText("Add");
     }
-    // const handleReset = async () => {
-    //     const newPassword = prompt(`Enter new password for ${email}:`);
-    //     if (!newPassword) return;
-
-    //     const res = await fetch("/api/users/resetPassword", {
-    //         method: "PATCH",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({ email, newPassword }),
-    //     });
-
-    //     if (res.ok) {
-    //         alert("Password updated successfully.");
-    //         setRequests(requests.filter((req) => req.email !== email));
-    //     } else {
-    //         alert("Error updating password.");
-    //     }
-    // };
-
+    const deleteRequest = async (id) => {
+        console.log(id);
+        if (!confirm("Are you sure you want to delete this request?")) {
+            return;
+        }
+        const res = await fetch(`/api/users/resetPassword?id=${id}`, {
+            method: 'DELETE'
+        });
+        if (res.ok) {
+            alert("Deleted successfully");
+            getRequests();
+        } else {
+            alert("Failed to delete");
+        }
+    }
     return (
         <Layout>
             <Section title="All Users">
@@ -224,8 +221,9 @@ const Users = () => {
                         <h2 className="h2">Reset Password Requests</h2>
                         {requests?.length > 0 && <ul>
                             {requests.map((req, index) => (
-                                <li key={index} className="p-2 my-1 border-b">
+                                <li key={index} className="p-2 my-1 border-b flex gap-3">
                                     <span>{req.email}</span>
+                                    <DeleteBtn onClickFunc={e => deleteRequest(req.id)} />
                                 </li>
                             ))}
                         </ul>}

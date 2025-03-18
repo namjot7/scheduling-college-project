@@ -1,5 +1,5 @@
 'use client'
-import { DeleteBtn, EditBtn } from '@/components/design/icons'
+import { DeleteBtn, EditBtn } from '@/components/design/Icons'
 import Layout from '@/components/design/Layout'
 import ClassForm from '@/components/forms/ClassForm'
 import Section from '@/components/Section'
@@ -138,7 +138,7 @@ const Classrooms = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData.map((item, idx) => (
+                                {displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
                                         {role == 1 && <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
@@ -149,8 +149,10 @@ const Classrooms = () => {
                                         )}
                                     </tr>
                                 ))}
+
                             </tbody>
                         </table>
+                        {displayData?.length == 0 && <div className="mt-5 text-center text-lg">No data to display</div>}
                     </div>
                     {role == 1 && <UploadButton apiEndPoint={"classrooms"} getData={getClasses} />}
                 </div>
