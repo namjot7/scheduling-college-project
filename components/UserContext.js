@@ -10,6 +10,7 @@ export const UserRoleProvider = ({ children }) => {
     const [userName, setUserName] = useState('')
     let user;
     const [email, setEmail] = useState("")
+    const [password, setPassword] = useState('')
 
     useEffect(() => {
         user = JSON.parse(localStorage.getItem('user'));
@@ -18,12 +19,13 @@ export const UserRoleProvider = ({ children }) => {
             return;
         }
         setRole(user.role);
-        setUserName(user.name);
+        setUserName(user.username);
         setEmail(user.email);
+        setPassword(user.password)
     }, []);
 
     return (
-        <UserRoleContext.Provider value={{ role, userName, email, setRole, setUserName }}>
+        <UserRoleContext.Provider value={{ role, userName, email, password, setRole, setUserName }}>
             {children}
         </UserRoleContext.Provider>
     )

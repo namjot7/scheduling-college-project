@@ -1,51 +1,4 @@
-// 'use client'
-
-// import Layout from '@/components/design/Layout'
-// import UserCard from '@/components/design/UserCard'
-// import Section from '@/components/Section'
-// import React from 'react'
-
-// const Users = () => {
-//     return (
-//         <Layout>
-//             <Section title={"All Users"}>
-//                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-//                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-//                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-//                             <tr>
-//                                 <th scope="col" className="px-6 py-3">
-//                                     Name
-//                                 </th>
-//                                 <th scope="col" className="px-6 py-3">
-//                                     Email
-//                                 </th>
-//                                 <th scope="col" className="px-6 py-3">
-//                                     Role
-//                                 </th>
-//                                 <th scope="col" className="px-6 py-3">
-//                                     Action
-//                                 </th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             <UserCard role={"Admin"} />
-//                             <UserCard role={"Observer"} />
-//                             <UserCard role={"Instructor"} />
-//                             <UserCard role={"Instructor"} />
-//                             <UserCard role={"Observer"} />
-//                         </tbody>
-//                     </table>
-//                 </div>
-
-//             </Section>
-//         </Layout>
-//     )
-// }
-
-// export default Users
-
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
@@ -53,17 +6,45 @@ import { DeleteBtn, EditBtn } from "@/components/design/icons";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
+    const [displayData, setDisplayData] = useState(users);
+    const [filteredUsers, setFilteredUsers] = useState([]); // SearchTerm
+
     const [formData, setFormData] = useState({ username: "", email: "", password: "", role: "" });
     const [selectedUserId, setSelectedUserId] = useState(0);
     const [dynamicText, setDynamicText] = useState("Add");
 
-    const [search, setSearch] = useState("");
+    const [requests, setRequests] = useState([]);
+
+    const [searchTerm, setSearchTerm] = useState("");
     const [sortField, setSortField] = useState("name");
     const [sortOrder, setSortOrder] = useState("asc");
 
+    // if (searchTerm) setdisplayData(filteredUsers);
+    // else setdisplayData(users);
+    // if (searchTerm) setDisplayData(filteredUsers);
+    // else setDisplayData(users);
+
     useEffect(() => {
         getUsers()
+        getRequests()
     }, [])
+
+    // SearchTerm for all fields
+    useEffect(() => {
+        let lowerSearchTermTerm = searchTerm.toLowerCase();
+        let updatedUsers = users.filter(item =>
+            Object.values(item).some(value =>
+                value && value.toString().toLowerCase().includes(lowerSearchTermTerm)
+            )
+        );
+        setFilteredUsers(updatedUsers)
+        console.log(updatedUsers);
+    }, [searchTerm, users])
+
+    // update the table whenever searchTerm or filteredUsers changes
+    useEffect(() => {
+        setDisplayData(searchTerm ? filteredUsers : users);
+    }, [filteredUsers]);
 
     const getUsers = async () => {
         const response = await fetch('/api/users');
@@ -72,17 +53,22 @@ const Users = () => {
         // console.log(data);
         setUsers(data)
     }
-
-    // const filteredUsers = users
-    //     .filter(user =>
-    //         user.name.toLowerCase().includes(search.toLowerCase()) ||
-    //         user.email.toLowerCase().includes(search.toLowerCase())
-    //     )
-    //     .sort((a, b) => {
-    //         const fieldA = a[sortField].toLowerCase();
-    //         const fieldB = b[sortField].toLowerCase();
-    //         return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
-    //     });
+    const getRequests = async () => {
+        const res = await fetch("/api/users/resetPassword")
+        const requestsData = await res.json()
+        console.log(requestsData);
+        setRequests(requestsData)
+    }
+    // const filteredUsers = users.filter(user =>
+    //     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //     user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    // )
+    // .sort((a, b) => {
+    //     const fieldA = a[sortField].toLowerCase();
+    //     const fieldB = b[sortField].toLowerCase();
+    //     return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
+    // });
+    // console.log(filteredUsers);
 
     const handleSort = (field) => {
         setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -94,22 +80,19 @@ const Users = () => {
 
     const editUser = (user) => {
         // console.log(user);
-        const userData = {
+        const displayData = {
             username: user.username,
             email: user.email,
             password: user.password,
             role: user.role
         }
-        setFormData(userData);
+        setFormData(displayData);
         setSelectedUserId(user.id);
         setDynamicText("Update")
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent page refresh
-        saveUser()
-    };
-    const saveUser = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         const url = selectedUserId ? `/api/users/?id=${selectedUserId}` : "/api/users"
         const method = selectedUserId ? "PUT" : "POST";
         // console.log({ formData, selectedUserId });
@@ -132,7 +115,7 @@ const Users = () => {
 
         getUsers(); // get the updated changes
         resetForm();
-    }
+    };
     const deleteUser = async (id) => {
         if (!confirm("Are you sure you want to delete this user?")) {
             return;
@@ -151,15 +134,32 @@ const Users = () => {
         setFormData({ username: "", email: "", password: "", role: "" });
         setDynamicText("Add");
     }
+    // const handleReset = async () => {
+    //     const newPassword = prompt(`Enter new password for ${email}:`);
+    //     if (!newPassword) return;
+
+    //     const res = await fetch("/api/users/resetPassword", {
+    //         method: "PATCH",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({ email, newPassword }),
+    //     });
+
+    //     if (res.ok) {
+    //         alert("Password updated successfully.");
+    //         setRequests(requests.filter((req) => req.email !== email));
+    //     } else {
+    //         alert("Error updating password.");
+    //     }
+    // };
 
     return (
         <Layout>
             <Section title="All Users">
-                {/* Search button and User form */}
+                {/* SearchTerm button and User form */}
                 <div>
                     <div className="mb-5 w-1/3">
-                        <input type="text" placeholder="Search Users..."
-                            value={search} onChange={(e) => setSearch(e.target.value)}
+                        <input type="text" placeholder="SearchTerm Users..."
+                            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <h3 className="h3">{dynamicText} User</h3>
@@ -188,34 +188,50 @@ const Users = () => {
                 </div>
 
                 {/* Table */}
-                <table className="table-basic ">
-                    <thead className="">
-                        <tr>
-                            <th className="cursor-pointer" onClick={() => handleSort("name")}>Name ⬍</th>
-                            <th className="cursor-pointer">Email</th>
-                            <th className="cursor-pointer">Passwords</th>
-                            <th className="cursor-pointer">Role</th>
-                            <th className="px-6 py-3 border text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {/* {filteredUsers.map(user => ( */}
-                        {users?.length > 0 && users.map(user => (
-                            <tr key={user.id}>
-                                <td>{user.username}</td>
-                                <td>{user.email}</td>
-                                <td>{user.password}</td>
-                                <td>{user.role}</td>
-                                <td className="flex gap-3">
-                                    <EditBtn onClickFunc={e => editUser(user)} />
-                                    <DeleteBtn onClickFunc={() => deleteUser(user.id)} />
-                                </td>
+                <div className="max-h-[80vh] overflow-y-scroll">
+                    <table className="table-basic ">
+                        <thead>
+                            <tr>
+                                <th onClick={() => handleSort("name")}>Name ⬍</th>
+                                <th>Email</th>
+                                <th>Passwords</th>
+                                <th>Role</th>
+                                <th>Actions</th>
                             </tr>
-                        ))
-                        }
-                        {/* ))} */}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {/* {filteredUsers.map(user => ( */}
+                            {displayData?.length > 0 && displayData.map(user => (
+                                <tr key={user.id}>
+                                    <td>{user.username}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.password}</td>
+                                    <td>{user.role}</td>
+                                    <td className="flex gap-3">
+                                        <EditBtn onClickFunc={() => editUser(user)} />
+                                        <DeleteBtn onClickFunc={() => deleteUser(user.id)} />
+                                    </td>
+                                </tr>
+                            ))}
+                            {/* ))} */}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Reset passwords Requests */}
+                <div className="mt-10">
+                    <div className="mt-10 p-6 ">
+                        <h2 className="h2">Reset Password Requests</h2>
+                        {requests?.length > 0 && <ul>
+                            {requests.map((req, index) => (
+                                <li key={index} className="p-2 my-1 border-b">
+                                    <span>{req.email}</span>
+                                </li>
+                            ))}
+                        </ul>}
+                        {requests?.length === 0 && <p>No pending requests.</p>}
+                    </div>
+                </div>
             </Section>
         </Layout>
     );

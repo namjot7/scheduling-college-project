@@ -67,7 +67,7 @@ const Dashboard = () => {
                         </div>
                     </div>}
 
-                    {/* Table */}
+                    {/* Instructor Schedule */}
                     {role == 2 &&
                         <div className="overflow-scroll max-w-[70vw] max-h-[80vh]">
                             <h2 className="h2">My Schedule</h2>
@@ -91,7 +91,7 @@ const Dashboard = () => {
                             </table>
                         </div>
                     }
-                    <AnnounceContent className='!p-0' userNameVisibility={false} />
+                    <AnnounceContent className='!p-0' hideUsername={true} />
                 </div>
             </Section>
         </Layout>

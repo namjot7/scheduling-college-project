@@ -79,7 +79,7 @@ label {
 input,
 .input,
 textarea {
-  @apply w-full px-2 py-1.5 border rounded-lg text-black border-gray-500 focus:ring-blue-100 focus:outline-blue-400;
+  @apply w-full px-2 py-1.5 border rounded text-black border-gray-500 focus:ring-blue-100 focus:outline-blue-400;
 }
 
 input[type='file'] {

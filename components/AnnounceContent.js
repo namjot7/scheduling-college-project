@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useUserRole } from '@/components/UserContext'
 
-const AnnounceContent = ({ className, userNameVisibility }) => {
+const AnnounceContent = ({ className, hideUsername }) => {
     const { userName, role } = useUserRole();
     // console.log({ userName, role });
 
@@ -72,7 +72,7 @@ const AnnounceContent = ({ className, userNameVisibility }) => {
     };
 
     return (
-        <Section className={className} userNameVisibility={userNameVisibility}>
+        <Section className={className} hideUsername={hideUsername}>
             {role == 1 && <AddBtn className="absolute top-7 right-4" showForm={setShowDialog} text={"Post"} />}
 
             {/* Create new announcement form */}

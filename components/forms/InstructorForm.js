@@ -139,7 +139,7 @@ const InstructorForm = ({
                                                     "text"
                                     }
                                     name={key}
-                                    // required 
+                                    required
                                     value={formData[key]} onChange={e => handleChange(e)}
                                 />
                             </div>

@@ -5,7 +5,6 @@ const tableName = 'roombook';
 
 export async function GET(req) {
     const db = await initSql()
-    console.log('get reuqest for nonadmin roombook');
 
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email");
@@ -14,21 +13,6 @@ export async function GET(req) {
     if (!email) {
         return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
-
-    try {
-        // get data
-        const data = await db.query(`SELECT * FROM ${tableName} WHERE email = ?`, [email]);
-
-        // get all the columns
-        // const getColumnsQuery = `SELECT COLUMN_NAME
-        //     FROM INFORMATION_SCHEMA.COLUMNS
-        //     WHERE TABLE_NAME = '${tableName}';`;
-        // const columns = await db.query(getColumnsQuery);
-
-        return NextResponse.json(data);
-    }
-    catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to fetch schedule" }, { status: 500 });
-    }
+    const data = await db.query(`SELECT * FROM ${tableName} WHERE email = ?`, [email]);
+    return NextResponse.json(data);
 }

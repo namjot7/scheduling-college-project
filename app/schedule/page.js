@@ -40,7 +40,7 @@ const Schedules = () => {
     const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited 
     const [showForm, setShowForm] = useState(false);
 
-    // Load schedules when page is loaded
+    // Load schedules and columns visibility when page is loaded
     useEffect(() => {
         const storedColumns = JSON.parse(localStorage.getItem("schedule_visibleCols"));
         // console.log(storedColumns);
@@ -238,13 +238,13 @@ const Schedules = () => {
                             <thead>
                                 <tr>
                                     {role == 1 && <th>Actions</th>}
-                                    {columns.map((col, index) => (
+                                    {columns?.length > 0 && columns.map((col, index) => (
                                         visibleColumns[col] && <th key={index}>{col}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData.map((item, idx) => (
+                                {displayData?.length > 0 && displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
                                         {role == 1 && <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
