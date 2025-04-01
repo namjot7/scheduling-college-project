@@ -17,11 +17,15 @@ import {
 } from "@/components/ui/sheet";
 import ScheduleForm from '@/components/forms/ScheduleForm'
 import { useUserRole } from '@/components/UserContext'
+import { notFound } from 'next/navigation'
 
 const Schedules = () => {
-    const { userName, role } = useUserRole()
-    // console.log(userName, role);
+    const { role } = useUserRole()
+    // console.log(role);
 
+    if (role !== 1) {
+        return notFound(); // Triggers Next.js's built-in 404 page
+    }
     const [selectedTerm, setSelectedTerm] = useState("fall_2024");
     const [terms, setTerms] = useState([])
     const [scheduleInfo, setScheduleInfo] = useState([]);

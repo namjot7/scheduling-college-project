@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useUserRole } from '@/components/UserContext'
 
-const AnnounceContent = ({ className, hideUsername }) => {
+const AnnounceContent = ({ className, hideUsername, buttons }) => {
     const { userName, role } = useUserRole();
     // console.log({ userName, role });
 
@@ -22,7 +22,6 @@ const AnnounceContent = ({ className, hideUsername }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [showDialog, setShowDialog] = useState(false);
-
 
     useEffect(() => {
         getAnnouncements()
@@ -77,7 +76,7 @@ const AnnounceContent = ({ className, hideUsername }) => {
 
     return (
         <Section className={className} hideUsername={hideUsername}>
-            {role == 1 && <AddBtn className="absolute top-7 right-4" showForm={setShowDialog} text={"Post"} />}
+            {role == 1 && buttons && <AddBtn className="absolute top-20 right-8" showForm={setShowDialog} text={"Post"} />}
 
             {/* Create new announcement form */}
             <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -118,7 +117,7 @@ const AnnounceContent = ({ className, hideUsername }) => {
                         </div>
                         <div className="flex items-end gap-3 flex-col">
                             <div>Posted On: {item.dateCreated.split('T')[0]}</div>
-                            {role == 1 && <DeleteBtn onClickFunc={() => deleteAnnouncement(item.id)} />}
+                            {role == 1 && buttons && <DeleteBtn onClickFunc={() => deleteAnnouncement(item.id)} />}
                         </div>
                     </div>
                 ))}

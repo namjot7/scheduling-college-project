@@ -6,8 +6,16 @@ import UploadButton from '@/components/UploadButton'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
 import InstructorForm from '@/components/forms/InstructorForm'
+import { useUserRole } from '@/components/UserContext'
+import { notFound } from 'next/navigation'
 
 const Instructors = () => {
+    const { role } = useUserRole();
+
+    if (role !== 1) {
+        return notFound(); // Triggers Next.js's built-in 404 page
+    }
+
     const [selectedTerm, setSelectedTerm] = useState("fall_2024");
     const [terms, setTerms] = useState([])
     const [scheduleInfo, setScheduleInfo] = useState([]);

@@ -3,8 +3,16 @@ import React, { useEffect, useState } from "react";
 import Layout from "@/components/design/Layout";
 import Section from "@/components/Section";
 import { DeleteBtn, EditBtn } from "@/components/design/Icons";
+import { useUserRole } from "@/components/UserContext";
+import { notFound } from "next/navigation";
 
 const Users = () => {
+    const { role } = useUserRole();
+
+    if (role !== 1) {
+        return notFound(); // Triggers Next.js's built-in 404 page
+    }
+
     const [users, setUsers] = useState([]);
     const [displayData, setDisplayData] = useState(users);
     const [filteredUsers, setFilteredUsers] = useState([]); // SearchTerm

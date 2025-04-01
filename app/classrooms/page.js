@@ -5,13 +5,17 @@ import ClassForm from '@/components/forms/ClassForm'
 import Section from '@/components/Section'
 import UploadButton from '@/components/UploadButton'
 import { useUserRole } from '@/components/UserContext'
+import { notFound } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
 
 const Classrooms = () => {
-    const { userName, role } = useUserRole();
-    // console.log(userName, role);
+    const { role } = useUserRole();
+    // console.log(role);
 
+    if (role !== 2) {
+        return notFound(); // Triggers Next.js's built-in 404 page
+    }
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
     const [columns, setColumns] = useState([]);
