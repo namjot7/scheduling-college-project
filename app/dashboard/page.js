@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 
 const Dashboard = () => {
     const [date, setDate] = useState(new Date())
-    const { userName, role, email } = useUserRole();
+    const { role, email } = useUserRole();
 
     const [schedule, setSchedule] = useState([]);
     const [columns, setColumns] = useState([]);
@@ -24,7 +24,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        console.log(role);
+        // console.log(role);
         if (role == 1) getCount()
         else if (role == 2) getSchedule()
     }, [role])
