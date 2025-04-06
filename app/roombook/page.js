@@ -13,6 +13,7 @@ const RoomBook = () => {
     const { userName, email, role } = useUserRole();
     const [roomRequests, setRoomRequests] = useState([]);
     const [userRequests, setUserRequests] = useState([]);
+
     // const [form, setForm] = useState({
     //     fullName: userName,
     //     email: email,
@@ -23,6 +24,7 @@ const RoomBook = () => {
     //     endTime: '' || "16:00",
     //     capacity: '' || 25,
     // });
+
     const [form, setForm] = useState({
         fullName: '',
         email: '',
@@ -54,7 +56,7 @@ const RoomBook = () => {
 
     const getRoomRequests = async () => {
         let res;
-        console.log("room get", email);
+        // console.log("room get", email);
 
         if (role == 1) {
             res = await fetch("/api/roombook");
@@ -62,7 +64,7 @@ const RoomBook = () => {
             res = await fetch("/api/roombook/nonAdmin/?email=" + email);
         }
         const data = await res.json()
-        console.log(data[0]);
+        // console.log(data[0]);
         setRoomRequests(data[0])
     }
     const handleChange = (e) => {
@@ -131,7 +133,6 @@ const RoomBook = () => {
                 <div className="p-6 rounded-lg w-full text-black flex flex-wrap gap-5">
 
                     {/* User: Room book form */}
-                    {/* role != 1 && */}
                     {role != 1 && <form onSubmit={e => handleForm(e)} className='w-full shadow-md lg:w-1/2 px-10 py-5'>
                         <h2 className="h2">Book a Room</h2>
 
@@ -214,51 +215,6 @@ const RoomBook = () => {
                             {roomRequests?.length == 0 && <div className="mt-5 text-center text-lg">No requests to display</div>}
                         </div >
                     </div >
-
-                    {/* Request status */}
-                    {/* role != 1 &&  */}
-                    {/* {<div className='w-full'>
-                        <h2 className="h2">Your Requests</h2>
-                        <div className="flex gap-4  flex-col">
-                            {roomRequests?.length > 0 && roomRequests.map(item => (
-                                <div key={item.id} className='bg-white shadow-lg mb-4 p-6 rounded-lg '>
-                                    <div className="flex justify-between ">
-                                        <ul>
-                                            <li className="text-lg font-semibold">User Details</li>
-                                            <li>{item.fullName}</li>
-                                            <li>{item.email}</li>
-                                            <li>{item.department}</li>
-                                        </ul>
-                                        <ul>
-                                            <li className="text-lg font-semibold">Booking Details</li>
-                                            <li>{item.purpose}</li>
-                                            <li>{item.room}</li>
-                                            <li>Capacity: {item.capacity}</li>
-                                            <li>{item.date.split('T')[0]}</li>
-                                            <li>{item.startTime.slice(0, 5)} to {item.endTime.slice(0, 5)}</li>
-                                        </ul>
-
-                                        <div className={`flex-center px-3 py-1 rounded-md pointer-events-none ${item.status == 1 ? 'text-green-500' : 'text-red-500'}`}>
-                                            {item.status === 1
-                                                ? "Done"
-                                                : item.status === 2 ? "Pending" : "Rejected"
-                                            }
-                                        </div>
-                                        {item.status == 2 && <div className="flex-center gap-2">
-                                            <button className="btn-success" onClick={e => updateApprovalStatus(item.id, 1)}>Approve</button>
-                                            <button className="btn-danger" onClick={e => updateApprovalStatus(item.id, 0)}>Reject</button>
-                                        </div>}
-                                    </div>
-                                    <textarea rows={2} className='w-1/2 !py-1 mt-2 !rounded-sm' type="text" name="" placeholder='Remarks'
-                                        value={remarks[item.id] || item.remarks || ""}
-                                        onChange={e => handleRemarksChange(item.id, e.target.value)}
-                                        disabled={item.status != 2}
-                                        required
-                                    />
-                                </div>
-                            ))}
-                        </div >
-                    </div >} */}
                 </div >
             </Section >
         </Layout >

@@ -10,7 +10,7 @@ const Staff = () => {
     const { role } = useUserRole()
     const [scheduleByWeek, setScheduleByWeek] = useState([]);
 
-    if (role !== 2) {
+    if (role != 1) {
         return notFound(); // Triggers Next.js's built-in 404 page
     }
     useEffect(() => {

@@ -4,14 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUserRole } from "./UserContext";
 
-// export const Logo = () => {
-//     return (
-//         <div className="flex gap-3 items-center pl-5">
-//             <img className="invert" src="./nctLogo.png" width={200} alt="aa" />
-//         </div>
-//     );
-// };
-
 const Navbar = () => {
     const pathName = usePathname();
     const router = useRouter();

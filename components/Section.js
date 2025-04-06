@@ -3,7 +3,7 @@ import React from 'react'
 import { useUserRole } from './UserContext';
 
 const Section = ({ title, children, className, hideUsername }) => {
-    const { userName, email } = useUserRole();
+    const { userName } = useUserRole();
 
     return (
         // w-2/3 md:w-3/4 bg-gray-700 text-gray-100 bg-gray-200

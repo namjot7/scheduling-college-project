@@ -11,12 +11,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <UserRoleProvider>
-      <html lang="en" className="light">
-        <body className={`${inter.className} antialiased`}>
+    <html lang="en" className="light">
+      <body className={`${inter.className} antialiased`}>
+        <UserRoleProvider>
           {children}
-        </body>
-      </html>
-    </UserRoleProvider>
+        </UserRoleProvider>
+      </body>
+    </html>
   );
 }

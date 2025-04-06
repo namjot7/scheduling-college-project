@@ -11,6 +11,7 @@ export const UserRoleProvider = ({ children }) => {
     let user;
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         user = JSON.parse(localStorage.getItem('user'));
@@ -22,7 +23,12 @@ export const UserRoleProvider = ({ children }) => {
         setUserName(user.username);
         setEmail(user.email);
         setPassword(user.password)
+        setLoading(false);
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>; // Or an empty placeholder, depending on your design
+    }
 
     return (
         <UserRoleContext.Provider value={{ role, userName, email, password, setRole, setUserName }}>

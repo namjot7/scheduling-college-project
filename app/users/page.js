@@ -163,7 +163,7 @@ const Users = () => {
                 {/* SearchTerm button and User form */}
                 <div>
                     <div className="mb-5 w-1/3">
-                        <input type="text" placeholder="SearchTerm Users..."
+                        <input type="text" placeholder="Search Users by Name"
                             value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>

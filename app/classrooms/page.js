@@ -13,7 +13,7 @@ const Classrooms = () => {
     const { role } = useUserRole();
     // console.log(role);
 
-    if (role !== 2) {
+    if (role !== 1) {
         return notFound(); // Triggers Next.js's built-in 404 page
     }
     const [scheduleInfo, setScheduleInfo] = useState([]);

@@ -5,7 +5,7 @@
 
 1. nodejs
 2. MySQL server and workbench
-3. VS Code
+3. Visual Studio Code
 
 ### Next steps
 
@@ -19,12 +19,6 @@ npm install
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 4. Create a .env file in the root directory and Setup the MYSQL database connection as below:
