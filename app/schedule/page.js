@@ -26,23 +26,52 @@ const Schedules = () => {
     if (role !== 1) {
         return notFound(); // Triggers Next.js's built-in 404 page
     }
-    const [selectedTerm, setSelectedTerm] = useState("fall_2024");
+    const [selectedTerm, setSelectedTerm] = useState("winter_2025");
     const [terms, setTerms] = useState([])
     const [scheduleInfo, setScheduleInfo] = useState([]);
     const [filteredSchedule, setFilteredSchedule] = useState([]); // Search
     const [filteredByTermSchedule, setFilteredByTermSchedule] = useState([]); // Term: winter, spring, fall
     const [columns, setColumns] = useState([]);
 
+    const [sortColumn, setSortColumn] = useState(null);
+    const [sortDirection, setSortDirection] = useState("asc");
+
+
     const [searchTerm, setSearchTerm] = useState("");
 
-    let displayData;
-    if (searchTerm) displayData = filteredSchedule;
-    else if (filteredByTermSchedule.length > 0) displayData = filteredByTermSchedule;
-    else displayData = scheduleInfo;
+    const [displayData, setDisplayData] = useState([]);
+    // let displayData;
+    useEffect(() => {
+        if (searchTerm) setDisplayData(filteredSchedule);
+        else if (filteredByTermSchedule.length > 0) setDisplayData(filteredByTermSchedule);
+        else setDisplayData(scheduleInfo);
+    }, [searchTerm, filteredByTermSchedule])
+
+
 
     const [visibleColumns, setVisibleColumns] = useState({});
     const [selectedEntry, setSelectedEntry] = useState(null);  // Track the ID of the entry being edited 
     const [showForm, setShowForm] = useState(false);
+
+    const sortData = (column) => {
+        let direction = "asc";
+        console.log(column);
+
+        if (sortColumn === column && sortDirection === "asc") {
+            direction = "desc";
+        }
+        const sortKey = columns[column] || column;
+        const sorted = [...displayData].sort((a, b) => {
+            if (a[sortKey] < b[sortKey]) return direction === "asc" ? -1 : 1;
+            if (a[sortKey] > b[sortKey]) return direction === "asc" ? 1 : -1;
+            return 0;
+        });
+        console.log(sorted);
+
+        setSortColumn(column);
+        setSortDirection(direction);
+        setDisplayData(sorted); // assuming displayData is a state you can set
+    };
 
     // Load schedules and columns visibility when page is loaded
     useEffect(() => {
@@ -244,8 +273,14 @@ const Schedules = () => {
                                 <tr>
                                     {role == 1 && <th>Actions</th>}
                                     {columns?.length > 0 && columns.map((col, index) => (
-                                        visibleColumns[col] && <th key={index}>{col}</th>
-                                    ))}
+                                        visibleColumns[col] && (
+                                            <th key={index} onClick={() => sortData(col)} className="cursor-pointer select-none">
+                                                {col}
+                                                {sortColumn === col && (
+                                                    sortDirection === "asc" ? " ↑" : " ↓"
+                                                )}
+                                            </th>
+                                        )))}
                                 </tr>
                             </thead>
                             <tbody>

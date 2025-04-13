@@ -7,7 +7,7 @@ import { useUserRole } from "./UserContext";
 const Navbar = () => {
     const pathName = usePathname();
     const router = useRouter();
-    const { userName, role, setRole, setUserName } = useUserRole();
+    const { role } = useUserRole();
     // console.log(pathName); // works
 
     // Classes for dynamic navbar
@@ -15,10 +15,7 @@ const Navbar = () => {
     const activeLink = inactiveLink + " invert bg-black";
 
     const signOut = () => {
-        // console.log('sign out clicked');
-        localStorage.setItem('user', null)
-        setRole("")
-        setUserName("")
+        localStorage.removeItem('user');
         router.push("/")
     }
     return (

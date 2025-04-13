@@ -8,26 +8,34 @@ export const UserRoleProvider = ({ children }) => {
     const router = useRouter();
     const [role, setRole] = useState(0);
     const [userName, setUserName] = useState('')
-    let user;
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(true);
 
+    // useEffect(() => {
+    //     getUser()
+    // }, []);
+
     useEffect(() => {
-        user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
-            router.push("/")
+        getUser()
+    }, [role, userName, email, password]);
+
+    const getUser = () => {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (!storedUser) {
+            setLoading(false);
+            router.push("/");
             return;
         }
-        setRole(user.role);
-        setUserName(user.username);
-        setEmail(user.email);
-        setPassword(user.password)
+        setRole(storedUser.role);
+        setUserName(storedUser.username);
+        setEmail(storedUser.email);
+        setPassword(storedUser.password);
         setLoading(false);
-    }, []);
+    }
 
     if (loading) {
-        return <div>Loading...</div>; // Or an empty placeholder, depending on your design
+        return <div>Loading...</div>;
     }
 
     return (
