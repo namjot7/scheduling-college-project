@@ -162,7 +162,7 @@ const Instructors = () => {
 
                     {/* Table */}
                     <div className="overflow-scroll max-w-[70vw] max-h-[80vh]">
-                        <table className="table-basic">
+                        {displayData?.length > 0 && <table className="table-basic">
                             <thead>
                                 <tr>
                                     <th>Actions</th>
@@ -172,7 +172,7 @@ const Instructors = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {displayData?.length > 0 && displayData.map((item, idx) => (
+                                {displayData.map((item, idx) => (
                                     <tr key={idx} className='relative'>
                                         <td className="flex gap-3">
                                             <EditBtn onClickFunc={() => editData(item.id)} />
@@ -184,7 +184,7 @@ const Instructors = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </table>}
                         {displayData?.length == 0 && <div className="mt-5 text-center text-lg">No data to display</div>}
                     </div>
 
